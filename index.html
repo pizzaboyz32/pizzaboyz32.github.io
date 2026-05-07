@@ -8,16 +8,59 @@
   body { margin: 0; overflow: hidden; font-family: 'Segoe UI', 'Sarabun', Tahoma, sans-serif; background: #0a0a14; color: #fff; user-select: none; }
   canvas { display: block; }
 
+  :root {
+    --ch-color: #00ff88;
+    --ch-gap: 5px;
+    --ch-thickness: 2px;
+    --ch-length: 14px;
+    --ch-dot-display: block;
+  }
+  .crosshair-render {
+    position: relative;
+    width: 80px; height: 80px;
+  }
+  .crosshair-render .line {
+    position: absolute; left: 50%; top: 50%;
+    background: var(--ch-color);
+    box-shadow: 0 0 4px var(--ch-color);
+  }
+  .crosshair-render .line.t {
+    width: var(--ch-thickness); height: var(--ch-length);
+    transform: translate(-50%, calc(-100% - var(--ch-gap)));
+  }
+  .crosshair-render .line.b {
+    width: var(--ch-thickness); height: var(--ch-length);
+    transform: translate(-50%, var(--ch-gap));
+  }
+  .crosshair-render .line.l {
+    height: var(--ch-thickness); width: var(--ch-length);
+    transform: translate(calc(-100% - var(--ch-gap)), -50%);
+  }
+  .crosshair-render .line.r {
+    height: var(--ch-thickness); width: var(--ch-length);
+    transform: translate(var(--ch-gap), -50%);
+  }
+  .crosshair-render .dot {
+    position: absolute; left: 50%; top: 50%;
+    width: var(--ch-thickness); height: var(--ch-thickness);
+    background: var(--ch-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    display: var(--ch-dot-display);
+  }
   #crosshair {
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    pointer-events: none; z-index: 10; width: 24px; height: 24px;
+    pointer-events: none; z-index: 10;
   }
-  #crosshair::before, #crosshair::after { content: ''; position: absolute; background: #00ff88; box-shadow: 0 0 4px rgba(0,255,136,0.8); }
-  #crosshair::before { width: 2px; height: 14px; left: 11px; top: 5px; }
-  #crosshair::after  { width: 14px; height: 2px; left: 5px; top: 11px; }
-  #crosshair .dot {
-    position: absolute; width: 2px; height: 2px; left: 11px; top: 11px;
-    background: #00ff88; border-radius: 50%;
+  .ch-preview-box {
+    display: flex; align-items: center; justify-content: center;
+    height: 110px;
+    background: linear-gradient(135deg, #14243a, #0a1828);
+    border-radius: 6px; margin: 10px 0 14px;
+    border: 1px solid #2a3a4e;
+    background-image:
+      linear-gradient(135deg, #14243a, #0a1828),
+      repeating-linear-gradient(45deg, transparent 0 8px, rgba(255,255,255,0.02) 8px 9px);
   }
 
   #hud {
@@ -78,6 +121,88 @@
   .hidden { display: none !important; }
 
   .row-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 16px; }
+
+  /* Motion graphics in instruction popups */
+  .motion {
+    position: relative; height: 80px; margin: 18px 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.4), rgba(0,255,136,0.05), rgba(0,0,0,0.4));
+    border-radius: 8px; overflow: hidden;
+    border: 1px solid #2a3a4e;
+  }
+  .tracking-motion .track-target {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 14px; height: 14px; background: #ff3b5c; border-radius: 50%;
+    box-shadow: 0 0 10px #ff3b5c;
+    animation: track-target-anim 3.5s ease-in-out infinite alternate;
+  }
+  .tracking-motion .track-cursor {
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    width: 22px; height: 22px; border: 2px solid #00ff88; border-radius: 50%;
+    box-shadow: 0 0 6px rgba(0,255,136,0.6);
+    animation: track-cursor-anim 3.5s ease-in-out infinite alternate;
+  }
+  @keyframes track-target-anim {
+    0%   { left: 8%; }
+    100% { left: calc(92% - 14px); }
+  }
+  @keyframes track-cursor-anim {
+    0%   { left: calc(8% + 7px); }
+    100% { left: calc(92% - 7px); }
+  }
+
+  .flicking-motion .reset-dot {
+    position: absolute; top: 50%; left: 30%;
+    width: 12px; height: 12px; background: #ffdd44; border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px #ffdd44;
+  }
+  .flicking-motion .main-dot {
+    position: absolute; top: 50%; left: 75%;
+    width: 12px; height: 12px; background: #ff3b5c; border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px #ff3b5c;
+    animation: flick-main-fade 3s steps(1) infinite;
+  }
+  .flicking-motion .flick-cursor {
+    position: absolute; top: 50%;
+    width: 22px; height: 22px; border: 2px solid #00ff88; border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 6px rgba(0,255,136,0.6);
+    animation: flick-cursor-anim 3s ease-in-out infinite;
+  }
+  .flicking-motion .arrow {
+    position: absolute; top: 50%; left: 30%; width: 45%; height: 2px;
+    background: linear-gradient(90deg, rgba(0,255,136,0.0), rgba(0,255,136,0.6));
+    transform: translateY(-50%);
+    opacity: 0;
+    animation: flick-arrow-anim 3s ease-in-out infinite;
+  }
+  @keyframes flick-cursor-anim {
+    0%, 25%   { left: 30%; }
+    40%, 70%  { left: 75%; }
+    85%, 100% { left: 30%; }
+  }
+  @keyframes flick-main-fade {
+    0%, 38%    { opacity: 1; }
+    39%, 100%  { opacity: 0.2; }
+  }
+  @keyframes flick-arrow-anim {
+    0%, 25%   { opacity: 0; }
+    30%, 38%  { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+
+  /* Crosshair settings panel */
+  .ch-settings { text-align: left; margin-top: 18px; padding: 14px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px solid #2a2a3e; }
+  .ch-settings h3 { margin: 0 0 10px 0; color: #00ff88; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+  .ch-settings label { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; font-size: 13px; gap: 10px; }
+  .ch-settings label span.lbl { flex: 0 0 110px; }
+  .ch-settings label input[type=range] { flex: 1; }
+  .ch-settings label .num { flex: 0 0 32px; text-align: right; color: #00ff88; font-family: monospace; }
+  .ch-settings .checkbox-row { justify-content: flex-start; gap: 8px; }
+
+  .cs2-line { font-size: 13px; opacity: 0.85; margin: 6px 0; }
+  .cs2-line strong { color: #ffdd44; }
 </style>
 </head>
 <body>
@@ -88,8 +213,12 @@
     <div class="value" id="phase-info">-</div>
   </div>
   <div class="row">
-    <div class="label">Sensitivity</div>
+    <div class="label">Sensitivity (Valorant)</div>
     <div class="value" id="sens-display">1.000</div>
+  </div>
+  <div class="row">
+    <div class="label">CS2 16:9 (× 4.7407408)</div>
+    <div class="value" id="cs2-display" style="color:#ffdd44;">4.741</div>
   </div>
   <div class="row">
     <div class="label">Progress</div>
@@ -97,40 +226,89 @@
   </div>
 </div>
 
-<div id="crosshair" class="hidden"><div class="dot"></div></div>
+<div id="crosshair" class="crosshair-render hidden">
+  <div class="line t"></div>
+  <div class="line b"></div>
+  <div class="line l"></div>
+  <div class="line r"></div>
+  <div class="dot"></div>
+</div>
 
 <div id="hint" class="hidden">คลิกซ้าย = ยิง &nbsp;|&nbsp; ESC = เมนูปรับ Sensitivity</div>
 
 <!-- เมนูเริ่มต้น -->
 <div id="start-menu" class="overlay">
-  <div class="panel">
+  <div class="panel" style="max-width: 600px;">
     <h1>FPS Sensitivity Helper</h1>
     <p>เครื่องมือช่วยหา <strong>Sensitivity</strong> ที่เหมาะสมกับการเล็งของคุณ</p>
     <p class="small" style="text-align:left; line-height:1.9;">
-      <strong style="color:#00ff88;">Phase 1 — Tracking</strong><br>
-      เล็งตามเป้าที่เคลื่อนที่ไปมา 30 วินาที<br>
-      หลังจากนั้นจะถามว่า sensitivity เร็วไป/ช้าไป/พอดี<br><br>
-      <strong style="color:#00ff88;">Phase 2 — Flicking</strong><br>
-      สะบัดเมาส์ยิงเป้านิ่งสุ่ม 20 เป้า<br>
-      มีเป้ากลางจอเพื่อรีเซ็ตจุดเล็งระหว่างยิง
+      <strong style="color:#00ff88;">Phase 1 — Tracking</strong> เล็งตามเป้าที่เคลื่อนที่ไปมา 30 วินาที<br>
+      <strong style="color:#00ff88;">Phase 2 — Flicking</strong> สะบัดเมาส์ยิงเป้านิ่งสุ่ม 20 เป้า
     </p>
-    <p class="small">กด <strong>ESC</strong> เพื่อปรับ Sensitivity ได้ตลอดเวลา</p>
+
+    <div style="margin: 18px 0; padding: 16px; background: rgba(0,0,0,0.25); border-radius: 8px; border: 1px solid #2a2a3e;">
+      <h3 style="margin: 0 0 10px 0; color:#00ff88; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">ปรับแต่งก่อนเริ่ม</h3>
+
+      <p style="margin: 6px 0 4px;">Sensitivity (Valorant)</p>
+      <input type="number" step="0.001" min="0.001" class="sens-input js-sens-input">
+      <p class="cs2-line">CS2 16:9: <strong class="js-cs2-val">4.741</strong></p>
+
+      <div style="margin-top: 14px;">
+        <p style="margin-bottom: 4px;">FOV: <strong class="js-fov-value" style="color:#00ff88;">103</strong>°</p>
+        <input type="range" class="js-fov-input" min="60" max="120" step="1" value="103" style="width: 80%;">
+      </div>
+
+      <div class="ch-settings">
+        <h3>Crosshair</h3>
+        <div class="ch-preview-box">
+          <div class="crosshair-render">
+            <div class="line t"></div><div class="line b"></div>
+            <div class="line l"></div><div class="line r"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+        <label><span class="lbl">ความห่าง (gap)</span><input type="range" class="js-ch-gap" min="0" max="20" step="1" value="5"><span class="num js-ch-gap-val">5</span></label>
+        <label><span class="lbl">ความหนา</span><input type="range" class="js-ch-thickness" min="1" max="6" step="1" value="2"><span class="num js-ch-thickness-val">2</span></label>
+        <label><span class="lbl">ความยาว</span><input type="range" class="js-ch-length" min="0" max="30" step="1" value="14"><span class="num js-ch-length-val">14</span></label>
+        <label><span class="lbl">สี</span><input type="color" class="js-ch-color" value="#00ff88" style="flex:1; height:28px;"><span class="num"></span></label>
+        <label class="checkbox-row"><input type="checkbox" class="js-ch-dot" checked> <span>เปิดจุดตรงกลาง (Dot)</span></label>
+      </div>
+    </div>
+
+    <p class="small">กด <strong>ESC</strong> ระหว่างเล่นเพื่อเปิดเมนูปรับค่าได้ตลอดเวลา</p>
     <button id="start-btn">เริ่มเลย</button>
   </div>
 </div>
 
 <!-- เมนู ESC -->
 <div id="pause-menu" class="overlay hidden">
-  <div class="panel">
+  <div class="panel" style="max-width: 580px;">
     <h1>เมนู / ปรับ Sensitivity</h1>
-    <p>ค่า Sensitivity ปัจจุบัน</p>
-    <input type="number" step="0.001" min="0.001" id="sens-input" class="sens-input">
-    <p class="small">พิมพ์ค่าใหม่เพื่อปรับด้วยตัวเอง<br>(ค่ามาตรฐาน = 1.000)</p>
+    <p>ค่า Sensitivity (Valorant) ปัจจุบัน</p>
+    <input type="number" step="0.001" min="0.001" class="sens-input js-sens-input">
+    <p class="cs2-line">CS2 16:9: <strong class="js-cs2-val">4.741</strong></p>
+    <p class="small">พิมพ์ค่าใหม่เพื่อปรับด้วยตัวเอง (ค่ามาตรฐาน = 1.000)</p>
 
     <div style="margin-top: 22px;">
-      <p style="margin-bottom: 6px;">FOV (Field of View): <strong id="fov-value" style="color:#00ff88;">103</strong>°</p>
-      <input type="range" id="fov-input" min="60" max="120" step="1" value="103" style="width: 80%;">
+      <p style="margin-bottom: 6px;">FOV (Field of View): <strong class="js-fov-value" style="color:#00ff88;">103</strong>°</p>
+      <input type="range" class="js-fov-input" min="60" max="120" step="1" value="103" style="width: 80%;">
       <p class="small">ปรับมุมมองกล้อง (60° แคบ – 120° กว้าง) &mdash; ค่า default 103° คือเทียบเท่า Valorant</p>
+    </div>
+
+    <div class="ch-settings">
+      <h3>Crosshair</h3>
+      <div class="ch-preview-box">
+        <div class="crosshair-render">
+          <div class="line t"></div><div class="line b"></div>
+          <div class="line l"></div><div class="line r"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+      <label><span class="lbl">ความห่าง (gap)</span><input type="range" class="js-ch-gap" min="0" max="20" step="1" value="5"><span class="num js-ch-gap-val">5</span></label>
+      <label><span class="lbl">ความหนา</span><input type="range" class="js-ch-thickness" min="1" max="6" step="1" value="2"><span class="num js-ch-thickness-val">2</span></label>
+      <label><span class="lbl">ความยาว</span><input type="range" class="js-ch-length" min="0" max="30" step="1" value="14"><span class="num js-ch-length-val">14</span></label>
+      <label><span class="lbl">สี</span><input type="color" class="js-ch-color" value="#00ff88" style="flex:1; height:28px;"><span class="num"></span></label>
+      <label class="checkbox-row"><input type="checkbox" class="js-ch-dot" checked> <span>เปิดจุดตรงกลาง (Dot)</span></label>
     </div>
 
     <div class="row-buttons">
@@ -140,18 +318,61 @@
   </div>
 </div>
 
-<!-- ป๊อปอัพ Tracking -->
+<!-- ป๊อปอัพอธิบาย Tracking ก่อนเริ่ม -->
+<div id="tracking-intro" class="overlay hidden">
+  <div class="panel">
+    <h1>Phase 1 — Tracking</h1>
+    <p>เป้าหมาย: <strong>เล็ง crosshair ให้อยู่บนเป้า</strong>ที่เคลื่อนที่ไปมา 30 วินาที</p>
+    <div class="motion tracking-motion">
+      <div class="track-target"></div>
+      <div class="track-cursor"></div>
+    </div>
+    <p class="small" style="text-align:left; line-height:1.9;">
+      • ปล่อย <strong>ข้อมือและแขนให้เป็นธรรมชาติ</strong> ไม่เกร็ง<br>
+      • <strong>ไม่ต้องพยายามกระตุกเมาส์</strong>เพื่อให้เข้าเป้า<br>
+      • ปล่อยเมาส์ให้ <strong>ไหลตามเป้าอย่างนุ่มนวล</strong><br>
+      • หาจังหวะของตัวเองที่รู้สึกลื่นที่สุด
+    </p>
+    <button id="tracking-intro-start">เริ่ม Tracking</button>
+  </div>
+</div>
+
+<!-- ป๊อปอัพ Tracking หลังจบเฟส -->
 <div id="tracking-question" class="overlay hidden">
   <div class="panel">
-    <h1>Tracking — รู้สึกอย่างไร?</h1>
-    <p>Sensitivity ปัจจุบัน</p>
-    <p class="big" id="tq-current">1.000</p>
-    <p>ความเร็วเมาส์ตอนเล็งตามเป้า...</p>
+    <h1>Tracking — ปรับ Sensitivity</h1>
+    <p>Sensitivity (Valorant)</p>
+    <input type="number" step="0.001" min="0.001" id="tq-input" class="sens-input">
+    <p class="cs2-line">CS2 16:9: <strong id="tq-cs2-val">4.741</strong></p>
+    <p style="line-height:1.7; margin-top:14px;">ปรับเพิ่มลดตามความเหมาะสม<br>ถามตัวเองดูว่าความเร็วเมาส์ปัจจุบัน <strong>สามารถ Track ตามเป้าหมายได้อย่างเป็นธรรมชาติ</strong>รึยัง</p>
+    <p class="small">ปุ่มลัด: ÷2 หรือ ×2 จะปรับค่าและเริ่มทดสอบ Tracking ใหม่</p>
     <div class="row-buttons">
-      <button id="tq-fast" class="danger">เร็วไป (÷ 2)</button>
-      <button id="tq-slow" class="danger">ช้าไป (× 2)</button>
-      <button id="tq-good">พอดีแล้ว</button>
+      <button id="tq-fast" class="danger">÷ 2</button>
+      <button id="tq-slow" class="danger">× 2</button>
+      <button id="tq-retry" class="secondary">ทดสอบ Tracking อีกครั้ง</button>
+      <button id="tq-good">พอดีแล้ว ไปต่อ</button>
     </div>
+  </div>
+</div>
+
+<!-- ป๊อปอัพอธิบาย Flicking ก่อนเริ่ม -->
+<div id="flicking-intro" class="overlay hidden">
+  <div class="panel">
+    <h1>Phase 2 — Flicking</h1>
+    <p><strong>สะบัดเมาส์</strong>จากเป้ารีเซ็ต (เหลือง) ไปเป้าหลัก (แดง) แบบ <strong>1 จังหวะ</strong></p>
+    <div class="motion flicking-motion">
+      <div class="reset-dot"></div>
+      <div class="main-dot"></div>
+      <div class="arrow"></div>
+      <div class="flick-cursor"></div>
+    </div>
+    <p class="small" style="text-align:left; line-height:1.9;">
+      • <strong>ไม่ต้องกระชากเมาส์เร็วๆ</strong> ไม่ต้องกระตุก<br>
+      • เลื่อนเมาส์จากจุดรีเซ็ตไปเป้าหลักในจังหวะเดียวอย่างนุ่มนวล<br>
+      • <strong>สังเกตว่า crosshair ถึงตำแหน่งเป้าตามที่ใจนึก</strong>หรือไม่<br>
+      • ไม่ต้องพยายามยิงให้โดน เน้นจังหวะและความรู้สึก
+    </p>
+    <button id="flicking-intro-start">เริ่ม Flicking</button>
   </div>
 </div>
 
@@ -187,9 +408,10 @@
 <div id="result-screen" class="overlay hidden">
   <div class="panel">
     <h1>เสร็จเรียบร้อย!</h1>
-    <p>Sensitivity ที่เหมาะสมกับคุณคือ</p>
+    <p>Sensitivity (Valorant) ที่เหมาะสมกับคุณคือ</p>
     <p class="big" id="final-sens">1.000</p>
-    <p class="small">นี่คือ <em>ตัวคูณความเร็วเมาส์</em> ที่ทดสอบได้จากเครื่องมือนี้<br>นำไปอ้างอิงเทียบกับ sensitivity ในเกม FPS อื่นๆ ได้</p>
+    <p class="cs2-line" style="font-size:18px;">CS2 16:9: <strong id="final-cs2-val">4.741</strong></p>
+    <p class="small">ค่าด้านบนคือ Sensitivity สำหรับ Valorant<br>ค่า CS2 ได้จากการคูณ × 4.7407408 (สำหรับสัดส่วน 16:9)</p>
     <div class="row-buttons">
       <button id="result-restart">ทดสอบใหม่</button>
       <button id="result-close" class="secondary">ปิดและเล่นต่อ</button>
@@ -205,8 +427,13 @@
   let fovDeg = 103;
   const BASE_MOUSE_SPEED = 0.0022; // rad per pixel at sens=1
   const PI_2 = Math.PI / 2;
+  const CS2_MULT = 4.7407408;
   let yaw = 0, pitch = 0;
   let justLockedSkipFrames = 0; // skip first few mousemove events after pointer lock to avoid Chrome's spurious huge deltas
+
+  function cs2From(val) {
+    return (Math.round(val * CS2_MULT * 1000) / 1000).toFixed(3);
+  }
 
   let phase = 'menu'; // menu | tracking | tracking-q | flicking | flicking-q | advice | result | paused
   let pausedFromPhase = null;
@@ -349,9 +576,9 @@
       pausedFromPhase = phase;
       phase = 'paused';
       showOverlay(els.pauseMenu);
-      els.sensInput.value = sensitivity.toFixed(3);
-      els.fovInput.value = fovDeg;
-      els.fovValue.textContent = fovDeg;
+      els.sensInputs.forEach(inp => inp.value = sensitivity.toFixed(3));
+      els.fovInputs.forEach(inp => inp.value = fovDeg);
+      els.fovValues.forEach(el => el.textContent = fovDeg);
     }
   });
 
@@ -383,32 +610,53 @@
     hint: document.getElementById('hint'),
     startMenu: document.getElementById('start-menu'),
     pauseMenu: document.getElementById('pause-menu'),
+    trackingIntro: document.getElementById('tracking-intro'),
     trackingQ: document.getElementById('tracking-question'),
+    flickingIntro: document.getElementById('flicking-intro'),
     flickingQ: document.getElementById('flicking-question'),
     dpiAdvice: document.getElementById('dpi-advice'),
     resultScreen: document.getElementById('result-screen'),
     sensDisplay: document.getElementById('sens-display'),
-    sensInput: document.getElementById('sens-input'),
-    fovInput: document.getElementById('fov-input'),
-    fovValue: document.getElementById('fov-value'),
+    cs2Display: document.getElementById('cs2-display'),
+    sensInputs: document.querySelectorAll('.js-sens-input'),
+    cs2Vals: document.querySelectorAll('.js-cs2-val'),
+    fovInputs: document.querySelectorAll('.js-fov-input'),
+    fovValues: document.querySelectorAll('.js-fov-value'),
     phaseInfo: document.getElementById('phase-info'),
     progressInfo: document.getElementById('progress-info'),
-    tqCurrent: document.getElementById('tq-current'),
+    tqInput: document.getElementById('tq-input'),
+    tqCs2Val: document.getElementById('tq-cs2-val'),
     fqHits: document.getElementById('fq-hits'),
     finalSens: document.getElementById('final-sens'),
+    finalCs2Val: document.getElementById('final-cs2-val'),
+    chGap: document.querySelectorAll('.js-ch-gap'),
+    chGapVal: document.querySelectorAll('.js-ch-gap-val'),
+    chThickness: document.querySelectorAll('.js-ch-thickness'),
+    chThicknessVal: document.querySelectorAll('.js-ch-thickness-val'),
+    chLength: document.querySelectorAll('.js-ch-length'),
+    chLengthVal: document.querySelectorAll('.js-ch-length-val'),
+    chColor: document.querySelectorAll('.js-ch-color'),
+    chDot: document.querySelectorAll('.js-ch-dot'),
   };
 
-  const allOverlays = [els.startMenu, els.pauseMenu, els.trackingQ, els.flickingQ, els.dpiAdvice, els.resultScreen];
+  const allOverlays = [els.startMenu, els.pauseMenu, els.trackingIntro, els.trackingQ, els.flickingIntro, els.flickingQ, els.dpiAdvice, els.resultScreen];
   function hideAllOverlays() { allOverlays.forEach(o => o.classList.add('hidden')); }
   function showOverlay(el) { hideAllOverlays(); el.classList.remove('hidden'); }
 
   function updateSensDisplay() {
     const s = sensitivity.toFixed(3);
+    const c = cs2From(sensitivity);
     els.sensDisplay.textContent = s;
-    els.tqCurrent.textContent = s;
+    els.cs2Display.textContent = c;
     els.finalSens.textContent = s;
-    if (document.activeElement !== els.sensInput) {
-      els.sensInput.value = s;
+    els.finalCs2Val.textContent = c;
+    els.tqCs2Val.textContent = c;
+    els.cs2Vals.forEach(el => el.textContent = c);
+    els.sensInputs.forEach(inp => {
+      if (document.activeElement !== inp) inp.value = s;
+    });
+    if (document.activeElement !== els.tqInput) {
+      els.tqInput.value = s;
     }
   }
 
@@ -504,7 +752,7 @@
     phase = 'flicking';
     flickAttempts = 0;
     flickHits = 0;
-    spawnFlickTarget();
+    spawnCenterTarget();
     hideAllOverlays();
     showHud();
     updateProgress();
@@ -524,6 +772,20 @@
     phase = 'result';
     updateSensDisplay();
     showOverlay(els.resultScreen);
+    unlockPointer();
+  }
+
+  function showTrackingIntro() {
+    cleanupTargets();
+    hideHud();
+    showOverlay(els.trackingIntro);
+    unlockPointer();
+  }
+
+  function showFlickingIntro() {
+    cleanupTargets();
+    hideHud();
+    showOverlay(els.flickingIntro);
     unlockPointer();
   }
 
@@ -604,7 +866,15 @@
 
   // ================= BUTTON HANDLERS =================
   document.getElementById('start-btn').addEventListener('click', () => {
+    showTrackingIntro();
+  });
+
+  document.getElementById('tracking-intro-start').addEventListener('click', () => {
     startTracking();
+  });
+
+  document.getElementById('flicking-intro-start').addEventListener('click', () => {
+    startFlicking();
   });
 
   document.getElementById('resume-btn').addEventListener('click', () => {
@@ -627,21 +897,78 @@
     showOverlay(els.startMenu);
   });
 
-  els.sensInput.addEventListener('input', () => {
-    const v = parseFloat(els.sensInput.value);
+  els.sensInputs.forEach(input => {
+    input.addEventListener('input', () => {
+      const v = parseFloat(input.value);
+      if (!isNaN(v) && v > 0) {
+        sensitivity = roundSens(v);
+        const s = sensitivity.toFixed(3);
+        const c = cs2From(sensitivity);
+        els.sensDisplay.textContent = s;
+        els.cs2Display.textContent = c;
+        els.cs2Vals.forEach(el => el.textContent = c);
+        els.tqCs2Val.textContent = c;
+        // sync other sens inputs (but not the one being typed)
+        els.sensInputs.forEach(inp => { if (inp !== input) inp.value = s; });
+        if (els.tqInput && document.activeElement !== els.tqInput) els.tqInput.value = s;
+      }
+    });
+  });
+
+  els.fovInputs.forEach(input => {
+    input.addEventListener('input', () => {
+      fovDeg = parseInt(input.value, 10);
+      els.fovValues.forEach(el => el.textContent = fovDeg);
+      els.fovInputs.forEach(inp => { if (inp !== input) inp.value = fovDeg; });
+      camera.fov = fovDeg;
+      camera.updateProjectionMatrix();
+    });
+  });
+
+  // Crosshair settings — sync all instances of each control via shared CSS variables
+  const chState = { gap: 5, thickness: 2, length: 14, color: '#00ff88', dot: true };
+  function applyCrosshair() {
+    const root = document.documentElement.style;
+    root.setProperty('--ch-gap', chState.gap + 'px');
+    root.setProperty('--ch-thickness', chState.thickness + 'px');
+    root.setProperty('--ch-length', chState.length + 'px');
+    root.setProperty('--ch-color', chState.color);
+    root.setProperty('--ch-dot-display', chState.dot ? 'block' : 'none');
+    els.chGap.forEach(i => i.value = chState.gap);
+    els.chThickness.forEach(i => i.value = chState.thickness);
+    els.chLength.forEach(i => i.value = chState.length);
+    els.chColor.forEach(i => i.value = chState.color);
+    els.chDot.forEach(i => i.checked = chState.dot);
+    els.chGapVal.forEach(s => s.textContent = chState.gap);
+    els.chThicknessVal.forEach(s => s.textContent = chState.thickness);
+    els.chLengthVal.forEach(s => s.textContent = chState.length);
+  }
+  function bindRange(list, key, parser) {
+    list.forEach(input => {
+      ['input', 'change'].forEach(ev => {
+        input.addEventListener(ev, () => {
+          chState[key] = parser(input);
+          applyCrosshair();
+        });
+      });
+    });
+  }
+  bindRange(els.chGap, 'gap', i => parseInt(i.value, 10));
+  bindRange(els.chThickness, 'thickness', i => parseInt(i.value, 10));
+  bindRange(els.chLength, 'length', i => parseInt(i.value, 10));
+  bindRange(els.chColor, 'color', i => i.value);
+  bindRange(els.chDot, 'dot', i => i.checked);
+  applyCrosshair();
+
+  els.tqInput.addEventListener('input', () => {
+    const v = parseFloat(els.tqInput.value);
     if (!isNaN(v) && v > 0) {
       sensitivity = roundSens(v);
       els.sensDisplay.textContent = sensitivity.toFixed(3);
-      els.tqCurrent.textContent = sensitivity.toFixed(3);
-      els.finalSens.textContent = sensitivity.toFixed(3);
+      els.cs2Display.textContent = cs2From(sensitivity);
+      els.tqCs2Val.textContent = cs2From(sensitivity);
+      els.pauseCs2Val.textContent = cs2From(sensitivity);
     }
-  });
-
-  els.fovInput.addEventListener('input', () => {
-    fovDeg = parseInt(els.fovInput.value, 10);
-    els.fovValue.textContent = fovDeg;
-    camera.fov = fovDeg;
-    camera.updateProjectionMatrix();
   });
 
   document.getElementById('tq-fast').addEventListener('click', () => {
@@ -654,8 +981,11 @@
     updateSensDisplay();
     startTracking();
   });
+  document.getElementById('tq-retry').addEventListener('click', () => {
+    startTracking();
+  });
   document.getElementById('tq-good').addEventListener('click', () => {
-    startFlicking();
+    showFlickingIntro();
   });
 
   document.getElementById('fq-yes').addEventListener('click', () => {
@@ -669,7 +999,7 @@
     yaw = 0; pitch = 0;
     camera.rotation.set(0, 0, 0);
     updateSensDisplay();
-    startTracking();
+    showTrackingIntro();
   });
 
   document.getElementById('result-restart').addEventListener('click', () => {
