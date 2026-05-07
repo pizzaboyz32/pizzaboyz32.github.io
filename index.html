@@ -10,9 +10,9 @@
 
   :root {
     --ch-color: #00ff88;
-    --ch-gap: 5px;
+    --ch-gap: 2px;
     --ch-thickness: 2px;
-    --ch-length: 14px;
+    --ch-length: 2px;
     --ch-dot-display: block;
   }
   .crosshair-render {
@@ -121,6 +121,38 @@
   .hidden { display: none !important; }
 
   .row-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 16px; }
+
+  .start-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    text-align: left; margin: 18px 0;
+  }
+  .start-grid .col { display: flex; flex-direction: column; }
+  .start-grid .col-info p { margin: 8px 0; line-height: 1.65; }
+  .start-grid .col-settings {
+    background: rgba(0,0,0,0.25); padding: 16px; border-radius: 8px;
+    border: 1px solid #2a2a3e;
+  }
+  .start-grid .col-settings h3 {
+    margin: 0 0 10px 0; color: #00ff88; font-size: 14px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .start-grid .col-settings .ch-settings { padding: 12px; margin-top: 14px; }
+  .panel.panel-wide { max-width: 920px; }
+  @media (max-width: 760px) {
+    .start-grid { grid-template-columns: 1fr; }
+    .panel.panel-wide { max-width: 540px; }
+  }
+
+  /* Tutorial video modal */
+  .video-wrap {
+    position: relative; width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000; border-radius: 6px; overflow: hidden;
+  }
+  .video-wrap iframe {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; border: 0;
+  }
 
   /* Motion graphics in instruction popups */
   .motion {
@@ -238,45 +270,72 @@
 
 <!-- เมนูเริ่มต้น -->
 <div id="start-menu" class="overlay">
-  <div class="panel" style="max-width: 600px;">
+  <div class="panel panel-wide">
     <h1>FPS Sensitivity Helper</h1>
-    <p>เครื่องมือช่วยหา <strong>Sensitivity</strong> ที่เหมาะสมกับการเล็งของคุณ</p>
-    <p class="small" style="text-align:left; line-height:1.9;">
-      <strong style="color:#00ff88;">Phase 1 — Tracking</strong> เล็งตามเป้าที่เคลื่อนที่ไปมา 30 วินาที<br>
-      <strong style="color:#00ff88;">Phase 2 — Flicking</strong> สะบัดเมาส์ยิงเป้านิ่งสุ่ม 20 เป้า
-    </p>
 
-    <div style="margin: 18px 0; padding: 16px; background: rgba(0,0,0,0.25); border-radius: 8px; border: 1px solid #2a2a3e;">
-      <h3 style="margin: 0 0 10px 0; color:#00ff88; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">ปรับแต่งก่อนเริ่ม</h3>
-
-      <p style="margin: 6px 0 4px;">Sensitivity (Valorant)</p>
-      <input type="number" step="0.001" min="0.001" class="sens-input js-sens-input">
-      <p class="cs2-line">CS2 16:9: <strong class="js-cs2-val">4.741</strong></p>
-
-      <div style="margin-top: 14px;">
-        <p style="margin-bottom: 4px;">FOV: <strong class="js-fov-value" style="color:#00ff88;">103</strong>°</p>
-        <input type="range" class="js-fov-input" min="60" max="120" step="1" value="103" style="width: 80%;">
+    <div class="start-grid">
+      <div class="col col-info">
+        <p>เครื่องมือช่วยหา <strong>Sensitivity</strong> ที่เหมาะสมกับการเล็งของคุณ</p>
+        <p style="line-height: 1.9;">
+          <strong style="color:#00ff88;">Phase 1 — Tracking</strong><br>
+          เล็งตามเป้าที่เคลื่อนที่ไปมา 30 วินาที<br>
+          <br>
+          <strong style="color:#00ff88;">Phase 2 — Flicking</strong><br>
+          สะบัดเมาส์ยิงเป้านิ่งสุ่ม 20 เป้า
+        </p>
+        <p class="small">กด <strong>ESC</strong> ระหว่างเล่นเพื่อเปิดเมนูปรับค่าได้ตลอดเวลา</p>
+        <div style="flex: 1;"></div>
+        <div class="row-buttons" style="justify-content: flex-start; margin-top: 8px;">
+          <button id="tutorial-btn" class="secondary">วิธีใช้ (วิดีโอ)</button>
+          <button id="start-btn">เริ่มเลย</button>
+        </div>
       </div>
 
-      <div class="ch-settings">
-        <h3>Crosshair</h3>
-        <div class="ch-preview-box">
-          <div class="crosshair-render">
-            <div class="line t"></div><div class="line b"></div>
-            <div class="line l"></div><div class="line r"></div>
-            <div class="dot"></div>
-          </div>
+      <div class="col col-settings">
+        <h3>ปรับแต่งก่อนเริ่ม</h3>
+
+        <p style="margin: 4px 0;">Sensitivity (Valorant)</p>
+        <input type="number" step="0.001" min="0.001" class="sens-input js-sens-input">
+        <p class="cs2-line">CS2 16:9: <strong class="js-cs2-val">4.741</strong></p>
+
+        <div style="margin-top: 12px;">
+          <p style="margin-bottom: 4px;">FOV: <strong class="js-fov-value" style="color:#00ff88;">103</strong>°</p>
+          <input type="range" class="js-fov-input" min="60" max="120" step="1" value="103" style="width: 100%;">
         </div>
-        <label><span class="lbl">ความห่าง (gap)</span><input type="range" class="js-ch-gap" min="0" max="20" step="1" value="5"><span class="num js-ch-gap-val">5</span></label>
-        <label><span class="lbl">ความหนา</span><input type="range" class="js-ch-thickness" min="1" max="6" step="1" value="2"><span class="num js-ch-thickness-val">2</span></label>
-        <label><span class="lbl">ความยาว</span><input type="range" class="js-ch-length" min="0" max="30" step="1" value="14"><span class="num js-ch-length-val">14</span></label>
-        <label><span class="lbl">สี</span><input type="color" class="js-ch-color" value="#00ff88" style="flex:1; height:28px;"><span class="num"></span></label>
-        <label class="checkbox-row"><input type="checkbox" class="js-ch-dot" checked> <span>เปิดจุดตรงกลาง (Dot)</span></label>
+
+        <div class="ch-settings">
+          <h3>Crosshair</h3>
+          <div class="ch-preview-box">
+            <div class="crosshair-render">
+              <div class="line t"></div><div class="line b"></div>
+              <div class="line l"></div><div class="line r"></div>
+              <div class="dot"></div>
+            </div>
+          </div>
+          <label><span class="lbl">ความห่าง (gap)</span><input type="range" class="js-ch-gap" min="0" max="20" step="1" value="2"><span class="num js-ch-gap-val">2</span></label>
+          <label><span class="lbl">ความหนา</span><input type="range" class="js-ch-thickness" min="1" max="6" step="1" value="2"><span class="num js-ch-thickness-val">2</span></label>
+          <label><span class="lbl">ความยาว</span><input type="range" class="js-ch-length" min="0" max="30" step="1" value="2"><span class="num js-ch-length-val">2</span></label>
+          <label><span class="lbl">สี</span><input type="color" class="js-ch-color" value="#00ff88" style="flex:1; height:28px;"><span class="num"></span></label>
+          <label class="checkbox-row"><input type="checkbox" class="js-ch-dot" checked> <span>เปิดจุดตรงกลาง (Dot)</span></label>
+        </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <p class="small">กด <strong>ESC</strong> ระหว่างเล่นเพื่อเปิดเมนูปรับค่าได้ตลอดเวลา</p>
-    <button id="start-btn">เริ่มเลย</button>
+<!-- Tutorial video modal -->
+<div id="tutorial-modal" class="overlay hidden">
+  <div class="panel" style="max-width: min(1400px, 95vw); padding: 20px 24px;">
+    <h1 style="margin: 0 0 14px;">วิธีใช้</h1>
+    <div class="video-wrap">
+      <iframe id="tutorial-video"
+        src=""
+        data-src="https://www.youtube.com/embed/OWw4bIKgQeM"
+        title="Tutorial"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+    <button id="tutorial-close" style="margin-top: 14px;">ปิด</button>
   </div>
 </div>
 
@@ -304,9 +363,9 @@
           <div class="dot"></div>
         </div>
       </div>
-      <label><span class="lbl">ความห่าง (gap)</span><input type="range" class="js-ch-gap" min="0" max="20" step="1" value="5"><span class="num js-ch-gap-val">5</span></label>
+      <label><span class="lbl">ความห่าง (gap)</span><input type="range" class="js-ch-gap" min="0" max="20" step="1" value="2"><span class="num js-ch-gap-val">2</span></label>
       <label><span class="lbl">ความหนา</span><input type="range" class="js-ch-thickness" min="1" max="6" step="1" value="2"><span class="num js-ch-thickness-val">2</span></label>
-      <label><span class="lbl">ความยาว</span><input type="range" class="js-ch-length" min="0" max="30" step="1" value="14"><span class="num js-ch-length-val">14</span></label>
+      <label><span class="lbl">ความยาว</span><input type="range" class="js-ch-length" min="0" max="30" step="1" value="2"><span class="num js-ch-length-val">2</span></label>
       <label><span class="lbl">สี</span><input type="color" class="js-ch-color" value="#00ff88" style="flex:1; height:28px;"><span class="num"></span></label>
       <label class="checkbox-row"><input type="checkbox" class="js-ch-dot" checked> <span>เปิดจุดตรงกลาง (Dot)</span></label>
     </div>
@@ -610,6 +669,8 @@
     hint: document.getElementById('hint'),
     startMenu: document.getElementById('start-menu'),
     pauseMenu: document.getElementById('pause-menu'),
+    tutorialModal: document.getElementById('tutorial-modal'),
+    tutorialVideo: document.getElementById('tutorial-video'),
     trackingIntro: document.getElementById('tracking-intro'),
     trackingQ: document.getElementById('tracking-question'),
     flickingIntro: document.getElementById('flicking-intro'),
@@ -639,7 +700,7 @@
     chDot: document.querySelectorAll('.js-ch-dot'),
   };
 
-  const allOverlays = [els.startMenu, els.pauseMenu, els.trackingIntro, els.trackingQ, els.flickingIntro, els.flickingQ, els.dpiAdvice, els.resultScreen];
+  const allOverlays = [els.startMenu, els.pauseMenu, els.tutorialModal, els.trackingIntro, els.trackingQ, els.flickingIntro, els.flickingQ, els.dpiAdvice, els.resultScreen];
   function hideAllOverlays() { allOverlays.forEach(o => o.classList.add('hidden')); }
   function showOverlay(el) { hideAllOverlays(); el.classList.remove('hidden'); }
 
@@ -869,6 +930,19 @@
     showTrackingIntro();
   });
 
+  document.getElementById('tutorial-btn').addEventListener('click', () => {
+    // Lazy-load the iframe so YouTube doesn't request anything until opened.
+    if (!els.tutorialVideo.src) {
+      els.tutorialVideo.src = els.tutorialVideo.dataset.src;
+    }
+    showOverlay(els.tutorialModal);
+  });
+  document.getElementById('tutorial-close').addEventListener('click', () => {
+    // Clearing src stops YouTube playback completely.
+    els.tutorialVideo.src = '';
+    showOverlay(els.startMenu);
+  });
+
   document.getElementById('tracking-intro-start').addEventListener('click', () => {
     startTracking();
   });
@@ -926,7 +1000,7 @@
   });
 
   // Crosshair settings — sync all instances of each control via shared CSS variables
-  const chState = { gap: 5, thickness: 2, length: 14, color: '#00ff88', dot: true };
+  const chState = { gap: 2, thickness: 2, length: 2, color: '#00ff88', dot: true };
   function applyCrosshair() {
     const root = document.documentElement.style;
     root.setProperty('--ch-gap', chState.gap + 'px');
