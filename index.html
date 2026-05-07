@@ -323,21 +323,6 @@
   </div>
 </div>
 
-<!-- Tutorial video modal -->
-<div id="tutorial-modal" class="overlay hidden">
-  <div class="panel" style="max-width: min(1400px, 95vw); padding: 20px 24px;">
-    <h1 style="margin: 0 0 14px;">วิธีใช้</h1>
-    <div class="video-wrap">
-      <iframe id="tutorial-video"
-        src=""
-        data-src="https://drive.google.com/file/d/1fTpRHAiIeLWS8irGcgVlB6_xxFXWRLxr/preview"
-        title="Tutorial"
-        allow="autoplay; encrypted-media"
-        allowfullscreen></iframe>
-    </div>
-    <button id="tutorial-close" style="margin-top: 14px;">ปิด</button>
-  </div>
-</div>
 
 <!-- เมนู ESC -->
 <div id="pause-menu" class="overlay hidden">
@@ -669,8 +654,6 @@
     hint: document.getElementById('hint'),
     startMenu: document.getElementById('start-menu'),
     pauseMenu: document.getElementById('pause-menu'),
-    tutorialModal: document.getElementById('tutorial-modal'),
-    tutorialVideo: document.getElementById('tutorial-video'),
     trackingIntro: document.getElementById('tracking-intro'),
     trackingQ: document.getElementById('tracking-question'),
     flickingIntro: document.getElementById('flicking-intro'),
@@ -700,7 +683,7 @@
     chDot: document.querySelectorAll('.js-ch-dot'),
   };
 
-  const allOverlays = [els.startMenu, els.pauseMenu, els.tutorialModal, els.trackingIntro, els.trackingQ, els.flickingIntro, els.flickingQ, els.dpiAdvice, els.resultScreen];
+  const allOverlays = [els.startMenu, els.pauseMenu, els.trackingIntro, els.trackingQ, els.flickingIntro, els.flickingQ, els.dpiAdvice, els.resultScreen];
   function hideAllOverlays() { allOverlays.forEach(o => o.classList.add('hidden')); }
   function showOverlay(el) { hideAllOverlays(); el.classList.remove('hidden'); }
 
@@ -931,16 +914,7 @@
   });
 
   document.getElementById('tutorial-btn').addEventListener('click', () => {
-    // Lazy-load the iframe so YouTube doesn't request anything until opened.
-    if (!els.tutorialVideo.src) {
-      els.tutorialVideo.src = els.tutorialVideo.dataset.src;
-    }
-    showOverlay(els.tutorialModal);
-  });
-  document.getElementById('tutorial-close').addEventListener('click', () => {
-    // Clearing src stops YouTube playback completely.
-    els.tutorialVideo.src = '';
-    showOverlay(els.startMenu);
+    window.open('https://youtu.be/iKzMtDK6cVY', '_blank', 'noopener,noreferrer');
   });
 
   document.getElementById('tracking-intro-start').addEventListener('click', () => {
