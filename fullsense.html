@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FULL SENSE — Road to Masters London | VCT 2026 Pacific Stage 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Sarabun:wght@300;400;600;700;800&family=Major+Mono+Display&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0a0a0f;
+  --bg-2:#12121a;
+  --panel:#16161f;
+  --panel-2:#1c1c28;
+  --line:#2a2a38;
+  --fs-red:#ff7a1a;
+  --fs-red-dim:#cc5500;
+  --fs-yellow:#ffd400;
+  --krx-blue:#e8e8e8;
+  --krx-dim:#888888;
+  --text:#f5f5f8;
+  --text-dim:#9999a8;
+  --text-mute:#5a5a6a;
+  --good:#2ee59d;
+  --bad:#ff4757;
+  --warn:#ffaa3b;
+  --display:'Bebas Neue',sans-serif;
+  --mono:'Space Mono',monospace;
+  --thai:'Sarabun',sans-serif;
+  --code:'Major Mono Display',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--thai);
+  font-weight:300;
+  line-height:1.6;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse at 10% 0%, rgba(255,122,26,0.10), transparent 50%),
+    radial-gradient(ellipse at 90% 100%, rgba(255,212,0,0.05), transparent 50%);
+}
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(255,255,255,0.005) 2px, rgba(255,255,255,0.005) 3px);
+  pointer-events:none;
+  z-index:1;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+
+/* === GLOBAL ELEMENTS === */
+.container{max-width:1400px;margin:0 auto;padding:0 28px;position:relative;z-index:2}
+
+.section-tag{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.25em;
+  color:var(--fs-red);
+  text-transform:uppercase;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+}
+.section-tag::before{
+  content:'';
+  width:32px;
+  height:1px;
+  background:var(--fs-red);
+}
+.section-title{
+  font-family:var(--display);
+  font-size:clamp(40px,6vw,84px);
+  letter-spacing:0.02em;
+  line-height:0.95;
+  margin-top:14px;
+  text-transform:uppercase;
+}
+.section-title em{font-style:normal;color:var(--fs-yellow);font-weight:inherit}
+.section-sub{
+  color:var(--text-dim);
+  margin-top:18px;
+  max-width:680px;
+  font-size:15px;
+}
+
+/* === NAV === */
+nav{
+  position:sticky;
+  top:0;
+  background:rgba(10,10,15,0.85);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+  z-index:50;
+  padding:14px 28px;
+}
+.nav-inner{
+  max-width:1400px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:24px;
+}
+.brand{
+  display:flex;align-items:center;gap:14px;
+  font-family:var(--display);
+  font-size:22px;
+  letter-spacing:0.05em;
+}
+.brand-mark{
+  width:38px;height:38px;
+  position:relative;
+  overflow:hidden;
+}
+.brand-mark img{
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
+  filter:drop-shadow(0 0 6px rgba(255,122,26,0.4));
+}
+.nav-links{
+  display:flex;gap:28px;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+}
+.nav-links a{color:var(--text-dim);transition:color .2s}
+.nav-links a:hover{color:var(--fs-red)}
+.live-pulse{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--fs-red);
+}
+.live-pulse::before{
+  content:'';
+  width:8px;height:8px;border-radius:50%;
+  background:var(--fs-red);
+  box-shadow:0 0 0 0 var(--fs-red);
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(255,46,58,0.7)}
+  70%{box-shadow:0 0 0 10px rgba(255,46,58,0)}
+  100%{box-shadow:0 0 0 0 rgba(255,46,58,0)}
+}
+@media(max-width:760px){.nav-links{display:none}}
+
+/* === HERO === */
+.hero{
+  position:relative;
+  padding:80px 0 60px;
+  overflow:hidden;
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,122,26,0.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,122,26,0.05) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse at center,#000 0%,transparent 75%);
+}
+.hero-bigtext{
+  position:absolute;
+  top:50%;
+  left:-2%;
+  font-family:var(--display);
+  font-size:clamp(140px,22vw,340px);
+  font-weight:400;
+  color:rgba(255,122,26,0.07);
+  letter-spacing:-0.02em;
+  line-height:0.85;
+  transform:translateY(-50%);
+  pointer-events:none;
+  white-space:nowrap;
+  user-select:none;
+}
+.hero-content{
+  position:relative;z-index:3;
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:48px;
+  align-items:center;
+}
+@media(max-width:900px){.hero-content{grid-template-columns:1fr}}
+
+.hero-meta{
+  display:flex;gap:16px;flex-wrap:wrap;
+  margin-bottom:20px;
+}
+.meta-tag{
+  padding:7px 14px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+}
+.meta-tag.red{border-color:var(--fs-red);color:var(--fs-red)}
+.meta-tag.yellow{border-color:var(--fs-yellow);color:var(--fs-yellow)}
+
+.hero h1{
+  font-family:var(--display);
+  font-size:clamp(56px,9vw,140px);
+  line-height:0.88;
+  letter-spacing:0.01em;
+  text-transform:uppercase;
+}
+.hero h1 .accent{
+  display:inline-block;
+  color:var(--fs-red);
+  position:relative;
+}
+.hero h1 .accent::after{
+  content:'';
+  position:absolute;
+  left:0;right:0;bottom:0.18em;
+  height:6px;
+  background:var(--fs-yellow);
+  z-index:-1;
+}
+.hero p.lead{
+  font-size:18px;
+  margin-top:24px;
+  max-width:540px;
+  color:var(--text-dim);
+}
+
+/* hero stat panel */
+.hero-panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  padding:28px;
+  position:relative;
+}
+.hero-panel::before{
+  content:'';
+  position:absolute;
+  top:-1px;right:-1px;
+  width:30px;height:30px;
+  border-top:2px solid var(--fs-red);
+  border-right:2px solid var(--fs-red);
+}
+.hero-panel::after{
+  content:'';
+  position:absolute;
+  bottom:-1px;left:-1px;
+  width:30px;height:30px;
+  border-bottom:2px solid var(--fs-yellow);
+  border-left:2px solid var(--fs-yellow);
+}
+.panel-h{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin-bottom:16px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.matchup{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:16px;
+  margin:18px 0 22px;
+}
+.matchup .team{
+  text-align:center;
+}
+.matchup .team .logo{
+  width:74px;height:74px;
+  margin:0 auto 10px;
+  border:1px solid var(--line);
+  background:var(--bg-2);
+  position:relative;
+  overflow:hidden;
+}
+.matchup .team .logo img{
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
+}
+.matchup .team.fs .logo{
+  border-color:var(--fs-red);
+  box-shadow:0 0 14px rgba(255,122,26,0.25);
+}
+.matchup .team.krx .logo{
+  border-color:var(--krx-blue);
+  box-shadow:0 0 14px rgba(232,232,232,0.15);
+}
+.matchup .team h3{
+  font-family:var(--display);
+  font-size:22px;
+  letter-spacing:0.05em;
+}
+.matchup .team .country{
+  font-family:var(--mono);
+  font-size:10px;
+  color:var(--text-mute);
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+}
+.vs{
+  font-family:var(--display);
+  font-size:48px;
+  color:var(--fs-yellow);
+  line-height:1;
+}
+.matchup-info{
+  display:flex;justify-content:space-between;
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--text-dim);
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  padding-top:18px;
+  border-top:1px dashed var(--line);
+}
+.matchup-info span:nth-child(2){color:var(--fs-red)}
+
+/* === SECTION === */
+section{padding:80px 0;position:relative}
+.section-head{margin-bottom:50px}
+
+/* === STATS GRID === */
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+}
+@media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+.stat{
+  background:var(--panel);
+  padding:24px;
+  position:relative;
+}
+.stat .label{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin-bottom:8px;
+}
+.stat .value{
+  font-family:var(--display);
+  font-size:48px;
+  line-height:1;
+  color:var(--fs-red);
+}
+.stat .sub{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--text-mute);
+  margin-top:4px;
+}
+
+/* === JOURNEY TIMELINE === */
+.journey{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:14px;
+  position:relative;
+}
+@media(max-width:900px){.journey{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.journey{grid-template-columns:1fr}}
+.match-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  padding:18px;
+  position:relative;
+  transition:transform .25s, border-color .25s;
+}
+.match-card:hover{transform:translateY(-3px);border-color:var(--fs-red)}
+.match-card.win{border-top:3px solid var(--good)}
+.match-card.loss{border-top:3px solid var(--bad)}
+.match-card .week{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.18em;
+  color:var(--text-mute);
+  text-transform:uppercase;
+}
+.match-card .opp{
+  font-family:var(--display);
+  font-size:22px;
+  margin:8px 0 4px;
+  letter-spacing:0.04em;
+}
+.match-card .score{
+  font-family:var(--mono);
+  font-size:24px;
+  font-weight:700;
+  margin:6px 0;
+}
+.match-card .score.win{color:var(--good)}
+.match-card .score.loss{color:var(--bad)}
+.match-card .maps{
+  font-size:11px;
+  color:var(--text-dim);
+  margin-top:6px;
+  border-top:1px dashed var(--line);
+  padding-top:8px;
+  font-family:var(--mono);
+}
+.match-card .date{
+  font-family:var(--mono);
+  font-size:9px;
+  color:var(--text-mute);
+  letter-spacing:0.15em;
+  margin-top:8px;
+}
+.match-card.future{
+  border:1px dashed var(--fs-yellow);
+  background:linear-gradient(135deg,rgba(255,212,0,0.04),rgba(255,46,58,0.04));
+}
+.match-card.future .opp{color:var(--fs-yellow)}
+
+/* === ROSTER === */
+.roster{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+}
+.player{
+  background:var(--panel);
+  border:1px solid var(--line);
+  padding:0;
+  position:relative;
+  overflow:hidden;
+  transition:transform .3s, border-color .3s;
+}
+.player:hover{transform:translateY(-4px);border-color:var(--fs-red)}
+.player::before{
+  content:attr(data-num);
+  position:absolute;
+  top:8px;right:14px;
+  font-family:var(--display);
+  font-size:80px;
+  color:rgba(255,122,26,0.10);
+  line-height:1;
+  z-index:0;
+}
+.player-head{
+  padding:20px 20px 16px;
+  background:linear-gradient(180deg,rgba(255,122,26,0.10),transparent);
+  border-bottom:1px solid var(--line);
+  position:relative;z-index:1;
+}
+.player-tag{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.2em;
+  color:var(--fs-yellow);
+  text-transform:uppercase;
+}
+.player-name{
+  font-family:var(--display);
+  font-size:32px;
+  letter-spacing:0.04em;
+  line-height:1;
+  margin-top:6px;
+}
+.player-role{
+  font-size:12px;
+  color:var(--text-dim);
+  margin-top:4px;
+  font-family:var(--mono);
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+}
+.player-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  border-bottom:1px solid var(--line);
+}
+.pstat{
+  padding:14px 12px;
+  text-align:center;
+  border-right:1px solid var(--line);
+}
+.pstat:last-child{border-right:none}
+.pstat .v{
+  font-family:var(--display);
+  font-size:24px;
+  color:var(--text);
+  line-height:1;
+}
+.pstat .l{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.15em;
+  color:var(--text-mute);
+  text-transform:uppercase;
+  margin-top:4px;
+}
+.player-body{
+  padding:16px 20px 20px;
+  position:relative;z-index:1;
+}
+.swot{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+.swot-row{
+  display:flex;gap:10px;align-items:flex-start;
+  font-size:13px;
+  line-height:1.55;
+}
+.swot-row .icon{
+  font-family:var(--mono);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  padding:3px 7px;
+  flex-shrink:0;
+  margin-top:1px;
+}
+.swot-row .icon.s{background:rgba(46,229,157,0.15);color:var(--good)}
+.swot-row .icon.w{background:rgba(255,71,87,0.15);color:var(--bad)}
+
+/* === MAP TABLE === */
+.map-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:16px;
+}
+.map-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  position:relative;
+  overflow:hidden;
+  transition:transform .25s;
+}
+.map-card:hover{transform:translateY(-3px)}
+.map-bar{
+  height:6px;
+  background:var(--line);
+  position:relative;
+}
+.map-bar-fill{
+  position:absolute;
+  inset:0 auto 0 0;
+  background:linear-gradient(90deg,var(--good),var(--fs-yellow));
+}
+.map-card.weak .map-bar-fill{background:linear-gradient(90deg,var(--bad),var(--warn))}
+.map-card.mid .map-bar-fill{background:linear-gradient(90deg,var(--warn),var(--fs-yellow))}
+.map-card.strong .map-bar-fill{background:linear-gradient(90deg,var(--good),#76ffaf)}
+.map-card.untested .map-bar-fill{background:var(--text-mute)}
+
+.map-head{
+  padding:18px 18px 12px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.map-name{
+  font-family:var(--display);
+  font-size:26px;
+  letter-spacing:0.04em;
+}
+.map-wr{
+  font-family:var(--mono);
+  font-size:14px;
+  font-weight:700;
+}
+.map-wr.s{color:var(--good)}
+.map-wr.w{color:var(--bad)}
+.map-wr.m{color:var(--warn)}
+.map-wr.u{color:var(--text-mute)}
+.map-body{
+  padding:0 18px 18px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  font-size:12px;
+}
+.map-stat{
+  background:var(--bg-2);
+  padding:10px;
+  border:1px solid var(--line);
+}
+.map-stat .l{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.15em;
+  color:var(--text-mute);
+  text-transform:uppercase;
+}
+.map-stat .v{
+  font-family:var(--display);
+  font-size:20px;
+  margin-top:4px;
+}
+.map-detail{
+  padding:12px 18px;
+  border-top:1px solid var(--line);
+  background:var(--bg-2);
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--text-dim);
+}
+.map-detail .row{
+  display:flex;justify-content:space-between;
+  padding:4px 0;
+}
+.map-detail .row span:last-child{color:var(--text)}
+
+/* === CHARTS === */
+.chart-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+@media(max-width:900px){.chart-grid{grid-template-columns:1fr}}
+.chart-box{
+  background:var(--panel);
+  border:1px solid var(--line);
+  padding:24px;
+  position:relative;
+  min-height:380px;
+}
+.chart-box h3{
+  font-family:var(--display);
+  font-size:22px;
+  letter-spacing:0.04em;
+  margin-bottom:18px;
+}
+.chart-canvas-wrap{
+  position:relative;
+  height:300px;
+}
+
+/* === DRX ANALYSIS === */
+.versus-banner{
+  background:
+    linear-gradient(135deg,rgba(255,122,26,0.20),rgba(232,232,232,0.06));
+  border:1px solid var(--line);
+  padding:40px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:40px;
+  position:relative;
+  overflow:hidden;
+}
+@media(max-width:760px){
+  .versus-banner{grid-template-columns:1fr;gap:20px;padding:24px}
+}
+.versus-banner::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:
+    repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(255,255,255,0.02) 20px,rgba(255,255,255,0.02) 21px);
+  pointer-events:none;
+}
+.vb-team{position:relative;z-index:1}
+.vb-team .logo{
+  width:120px;height:120px;
+  margin-bottom:14px;
+  border:2px solid var(--line);
+  position:relative;
+  overflow:hidden;
+}
+.vb-team .logo img{
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
+}
+.vb-team.fs{text-align:right}
+.vb-team.fs .logo{
+  margin-left:auto;
+  border-color:var(--fs-red);
+  box-shadow:0 0 30px rgba(255,122,26,0.3);
+}
+.vb-team.krx .logo{
+  border-color:var(--krx-blue);
+  box-shadow:0 0 30px rgba(232,232,232,0.18);
+}
+.vb-team h3{
+  font-family:var(--display);
+  font-size:36px;
+  letter-spacing:0.04em;
+}
+.vb-team .stats-line{
+  display:flex;gap:14px;
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--text-dim);
+  margin-top:8px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+}
+.vb-team.fs .stats-line{justify-content:flex-end}
+.vb-vs{
+  font-family:var(--display);
+  font-size:88px;
+  color:var(--fs-yellow);
+  line-height:1;
+  text-align:center;
+  position:relative;z-index:1;
+}
+.vb-meta{
+  text-align:center;
+  margin-top:8px;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+}
+
+.h2h{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-top:30px;
+}
+@media(max-width:760px){.h2h{grid-template-columns:1fr}}
+.h2h-item{
+  background:var(--panel);
+  border:1px solid var(--line);
+  padding:16px;
+  border-left:3px solid var(--fs-red);
+}
+.h2h-item.l{border-left-color:var(--bad)}
+.h2h-item .ev{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.15em;
+  color:var(--text-mute);
+  text-transform:uppercase;
+}
+.h2h-item .res{
+  font-family:var(--display);
+  font-size:32px;
+  margin:6px 0;
+}
+.h2h-item .res.w{color:var(--good)}
+.h2h-item .res.l{color:var(--bad)}
+.h2h-item .dt{
+  font-family:var(--mono);
+  font-size:10px;
+  color:var(--text-dim);
+}
+
+.compare-table{
+  margin-top:36px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  overflow:hidden;
+}
+.ct-row{
+  display:grid;
+  grid-template-columns:1fr 100px 1fr;
+  border-bottom:1px solid var(--line);
+}
+.ct-row:last-child{border-bottom:none}
+.ct-row.head{background:var(--bg-2)}
+.ct-row > div{
+  padding:14px 18px;
+}
+.ct-row > div:nth-child(1){text-align:right}
+.ct-row > div:nth-child(2){
+  text-align:center;
+  border-left:1px solid var(--line);
+  border-right:1px solid var(--line);
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.15em;
+  color:var(--text-mute);
+  text-transform:uppercase;
+}
+.ct-row.head > div{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.15em;
+  color:var(--text-dim);
+  text-transform:uppercase;
+}
+.ct-row .val{
+  font-family:var(--display);
+  font-size:24px;
+}
+.ct-row .val.win{color:var(--fs-red)}
+.ct-row .val.win.right{color:var(--krx-blue)}
+.ct-row .val.right{text-align:left}
+
+/* === KEY INSIGHTS === */
+.insight-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+  margin-top:30px;
+}
+@media(max-width:760px){.insight-grid{grid-template-columns:1fr}}
+.insight{
+  background:var(--panel);
+  border:1px solid var(--line);
+  padding:22px;
+  position:relative;
+  border-left:4px solid var(--fs-red);
+}
+.insight.adv{border-left-color:var(--good)}
+.insight.risk{border-left-color:var(--warn)}
+.insight.neutral{border-left-color:var(--krx-blue)}
+.insight .tag{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.18em;
+  color:var(--fs-red);
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.insight.adv .tag{color:var(--good)}
+.insight.risk .tag{color:var(--warn)}
+.insight.neutral .tag{color:var(--krx-blue)}
+.insight h4{
+  font-family:var(--display);
+  font-size:24px;
+  letter-spacing:0.03em;
+  margin-bottom:8px;
+}
+.insight p{font-size:14px;color:var(--text-dim)}
+
+/* === PREDICTION === */
+.predict-box{
+  background:linear-gradient(135deg,var(--panel),var(--bg-2));
+  border:1px solid var(--fs-red);
+  padding:36px;
+  margin-top:36px;
+  position:relative;
+}
+.predict-box::before{
+  content:'PREDICTION';
+  position:absolute;
+  top:-1px;left:24px;
+  background:var(--fs-red);
+  color:#000;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.2em;
+  font-weight:700;
+  padding:4px 10px;
+}
+.predict-box h3{
+  font-family:var(--display);
+  font-size:34px;
+  letter-spacing:0.03em;
+  margin:8px 0 16px;
+}
+.predict-box p{color:var(--text-dim);font-size:15px;margin-bottom:14px}
+.predict-tactic{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:22px;
+}
+@media(max-width:600px){.predict-tactic{grid-template-columns:1fr}}
+.tactic{
+  background:var(--bg-2);
+  padding:16px;
+  border:1px solid var(--line);
+}
+.tactic .l{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--fs-yellow);
+  margin-bottom:6px;
+}
+.tactic h4{
+  font-family:var(--display);
+  font-size:18px;
+  letter-spacing:0.03em;
+  margin-bottom:6px;
+}
+.tactic p{font-size:13px;color:var(--text-dim);margin:0}
+
+/* === FOOTER === */
+footer{
+  margin-top:80px;
+  padding:40px 0 30px;
+  border-top:1px solid var(--line);
+  text-align:center;
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--text-mute);
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+}
+footer p{margin:4px 0}
+footer a{color:var(--fs-red)}
+
+/* small utility */
+.glitch{position:relative;display:inline-block}
+.scroll-reveal{opacity:0;transform:translateY(20px);transition:opacity .8s, transform .8s}
+.scroll-reveal.in{opacity:1;transform:translateY(0)}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="brand-mark"><img src="assets/full-sense-logo.png" alt="Full Sense"></div>
+      <span>FULL SENSE × VCT</span>
+    </div>
+    <div class="nav-links">
+      <a href="#journey">Journey</a>
+      <a href="#players">Roster</a>
+      <a href="#maps">Maps</a>
+      <a href="#opponent">Vs DRX</a>
+      <a href="#predict">Outlook</a>
+    </div>
+    <div class="live-pulse">UR1 · MAY 7</div>
+  </div>
+</nav>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-bigtext">FULLSENSE</div>
+  <div class="container">
+    <div class="hero-content">
+      <div>
+        <div class="hero-meta">
+          <div class="meta-tag red">VCT 2026 PACIFIC · STAGE 1</div>
+          <div class="meta-tag">OMEGA #2 SEED</div>
+          <div class="meta-tag yellow">PLAYOFFS QUALIFIED</div>
+        </div>
+        <h1>
+          ROAD TO<br>
+          <span class="accent">MASTERS</span><br>
+          LONDON
+        </h1>
+        <p class="lead">
+          ทีมไทยน้องใหม่ของลีก Pacific หลังถูกเรียกเข้าทดแทน Talon Esports ในเดือนธันวาคม 2025 — Full Sense จบ Group Stage ด้วยสถิติ 3 ชนะ 2 แพ้ และคว้าตั๋ว Playoffs สมัยแรกในรอบไลน์อัพใหม่ คู่ต่อสู้รอบ Upper Round 1 คือยักษ์เกาหลีเลือดใหม่ Kiwoom DRX ที่จบ Alpha #2 ด้วยสถิติ 4-1
+        </p>
+      </div>
+      <aside class="hero-panel">
+        <div class="panel-h">
+          <span>NEXT MATCH</span>
+          <span style="color:var(--fs-yellow)">UR1</span>
+        </div>
+        <div class="matchup">
+          <div class="team krx">
+            <div class="logo"><img src="assets/kiwoom-drx-logo.png" alt="Kiwoom DRX"></div>
+            <h3>Kiwoom DRX</h3>
+            <div class="country">South Korea</div>
+          </div>
+          <div class="vs">VS</div>
+          <div class="team fs">
+            <div class="logo"><img src="assets/full-sense-logo.png" alt="Full Sense"></div>
+            <h3>Full Sense</h3>
+            <div class="country">Thailand</div>
+          </div>
+        </div>
+        <div class="matchup-info">
+          <span>BO3</span>
+          <span>MAY 7 · 17:00 ICT</span>
+          <span>UPPER R1</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============== KEY STATS ============== -->
+<section style="padding-top:30px">
+  <div class="container">
+    <div class="section-head scroll-reveal">
+      <div class="section-tag">FULL SENSE · BY THE NUMBERS</div>
+      <h2 class="section-title">GROUP STAGE <em>SUMMARY</em></h2>
+    </div>
+    <div class="stat-grid scroll-reveal">
+      <div class="stat">
+        <div class="label">Series Record</div>
+        <div class="value">3–2</div>
+        <div class="sub">Omega Group · 2nd seed</div>
+      </div>
+      <div class="stat">
+        <div class="label">Map Differential</div>
+        <div class="value">+3</div>
+        <div class="sub">7 maps won, 4 lost</div>
+      </div>
+      <div class="stat">
+        <div class="label">Top Fragger Rating</div>
+        <div class="value">1.31</div>
+        <div class="sub">primmie · #2 in Pacific</div>
+      </div>
+      <div class="stat">
+        <div class="label">Unbeaten Maps</div>
+        <div class="value">4</div>
+        <div class="sub">Bind · Split · Lotus · Sunset*</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== JOURNEY ============== -->
+<section id="journey">
+  <div class="container">
+    <div class="section-head scroll-reveal">
+      <div class="section-tag">THE JOURNEY · WEEK 1 → WEEK 5</div>
+      <h2 class="section-title">FIVE WEEKS,<br>FIVE <em>STORIES</em></h2>
+      <p class="section-sub">เริ่มต้นด้วยชัยชนะสองนัดติดเหนือ DFM และ ZETA → สะดุดในเกมล่าสุดต่อ T1 และ RRQ — Full Sense เข้าสู่รอบ Playoffs ในฐานะม้ามืดที่ฟอร์มเริ่มสะดุดในช่วงท้าย</p>
+    </div>
+    <div class="journey">
+      <div class="match-card win scroll-reveal">
+        <div class="week">WEEK 1</div>
+        <div class="opp">vs DFM</div>
+        <div class="score win">2 – 0</div>
+        <div class="maps">Pearl 13-6 · Bind 13-8</div>
+        <div class="date">APR 04 · 2026</div>
+      </div>
+      <div class="match-card win scroll-reveal">
+        <div class="week">WEEK 2</div>
+        <div class="opp">vs ZETA</div>
+        <div class="score win">2 – 0</div>
+        <div class="maps">Fracture 13-6 · Split 13-7</div>
+        <div class="date">APR 12 · 2026</div>
+      </div>
+      <div class="match-card win scroll-reveal">
+        <div class="week">WEEK 3</div>
+        <div class="opp">vs VARREL</div>
+        <div class="score win">2 – 0</div>
+        <div class="maps">Haven 13-5 · Lotus 14-12 OT</div>
+        <div class="date">APR 17 · 2026</div>
+      </div>
+      <div class="match-card loss scroll-reveal">
+        <div class="week">WEEK 4</div>
+        <div class="opp">vs RRQ</div>
+        <div class="score loss">1 – 2</div>
+        <div class="maps">Pearl 13-9 · Haven 10-13 · Fracture 3-13</div>
+        <div class="date">APR 24 · 2026</div>
+      </div>
+      <div class="match-card loss scroll-reveal">
+        <div class="week">WEEK 5</div>
+        <div class="opp">vs T1</div>
+        <div class="score loss">1 – 2</div>
+        <div class="maps">Pearl 5-13 · Bind 13-7 · Breeze 9-13</div>
+        <div class="date">MAY 02 · 2026</div>
+      </div>
+    </div>
+
+    <div style="margin-top:30px;text-align:center">
+      <div class="match-card future" style="display:inline-block;text-align:left;min-width:280px">
+        <div class="week" style="color:var(--fs-yellow)">→ NEXT · PLAYOFFS UPPER R1</div>
+        <div class="opp">vs Kiwoom DRX</div>
+        <div class="score" style="color:var(--fs-yellow)">BO3</div>
+        <div class="maps">Map pool ทั้ง 7 แผนที่ · Vetos สำคัญ</div>
+        <div class="date">MAY 07 · 2026 · 17:00 ICT</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== ROSTER ============== -->
+<section id="players" style="background:var(--bg-2)">
+  <div class="container">
+    <div class="section-head scroll-reveal">
+      <div class="section-tag">ROSTER ANALYSIS · INDIVIDUAL BREAKDOWN</div>
+      <h2 class="section-title">FIVE <em>SOULS</em>,<br>ONE FLAG</h2>
+      <p class="section-sub">วิเคราะห์จุดแข็งและจุดอ่อนของผู้เล่นแต่ละคน อิงสถิติ Stage 1 ทั้งหมด — primmie คือ Engine ของทีม, Killua และ Crws ทำหน้าที่ Support, JitBoyS เป็น Sentinel หลัก, Leviathan ดูแลด้านยุทธวิธี</p>
+    </div>
+
+    <div class="roster">
+
+      <!-- primmie -->
+      <div class="player scroll-reveal" data-num="01">
+        <div class="player-head">
+          <div class="player-tag">DUELIST · STAR</div>
+          <div class="player-name">primmie</div>
+          <div class="player-role">Phoenix · Waylay · Raze</div>
+        </div>
+        <div class="player-stats">
+          <div class="pstat"><div class="v">1.31</div><div class="l">Rating</div></div>
+          <div class="pstat"><div class="v">270.8</div><div class="l">ACS</div></div>
+          <div class="pstat"><div class="v">1.40</div><div class="l">K/D</div></div>
+        </div>
+        <div class="player-body">
+          <div class="swot">
+            <div class="swot-row"><span class="icon s">S</span><span><b>Carry ตัวจริง</b> — ACS อันดับ 2 ทั้งภูมิภาค ทำสถิติ 24 kills เกมเดียวเจอ ZETA ผู้เล่น Duelist ที่หวังพึ่งได้ที่สุดใน SEA ปัจจุบัน</span></div>
+            <div class="swot-row"><span class="icon s">S</span><span><b>HS% 34%</b> — แม่นกว่าผู้เล่น Duelist Top 5 หลายคน เกมเปิดดวลฉับไวด้วย Phoenix</span></div>
+            <div class="swot-row"><span class="icon w">W</span><span><b>FK:FD = 0.20:0.12</b> — เปิดเกมดีแต่ก็ตายเป็นที่หนึ่งบ่อยเช่นกัน เมื่อแผนล้มเหลว มีโอกาสตายเปล่า</span></div>
+            <div class="swot-row"><span class="icon w">W</span><span><b>ภาระ</b> — รับ 0.94 KPR ทีมพึ่ง primmie หนัก หาก DRX ปิด angles ของเขาได้ ทีมจะอ่อนล้าทันที</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Killua -->
+      <div class="player scroll-reveal" data-num="02">
+        <div class="player-head">
+          <div class="player-tag">INITIATOR</div>
+          <div class="player-name">Killua</div>
+          <div class="player-role">Fade · Skye · Sova</div>
+        </div>
+        <div class="player-stats">
+          <div class="pstat"><div class="v">1.11</div><div class="l">Rating</div></div>
+          <div class="pstat"><div class="v">211.1</div><div class="l">ACS</div></div>
+          <div class="pstat"><div class="v">1.11</div><div class="l">K/D</div></div>
+        </div>
+        <div class="player-body">
+          <div class="swot">
+            <div class="swot-row"><span class="icon s">S</span><span><b>Utility King</b> — APR 0.38 อันดับต้นๆ ของลีก ป้อนข้อมูลให้ primmie อย่างต่อเนื่อง</span></div>
+            <div class="swot-row"><span class="icon s">S</span><span><b>HS% 33%</b> — Initiator ที่ยิงได้แม่นยำ เพิ่มผลงาน Frag เสริมในรอบ post-plant</span></div>
+            <div class="swot-row"><span class="icon w">W</span><span><b>First Kill ต่ำ</b> — FKPR 0.07 เน้น Support ไม่ใช่คนเปิด สถานการณ์ที่ทีมต้องบุกเร็วอาจขาดความ aggressive</span></div>
+            <div class="swot-row"><span class="icon w">W</span><span><b>เจอเก็บ Recon ยาก</b> — Sova lineup ยังคงเป็นจุดอ่อน เทียบกับ Initiator ระดับ Pacific อย่าง Xross/staх</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- JitBoyS -->
+      <div class="player scroll-reveal" data-num="03">
+        <div class="player-head">
+          <div class="player-tag">SENTINEL · DUELIST FLEX</div>
+          <div class="player-name">JitBoyS</div>
+          <div class="player-role">Neon · Cypher</div>
+        </div>
+        <div class="player-stats">
+          <div class="pstat"><div class="v">0.98</div><div class="l">Rating</div></div>
+          <div class="pstat"><div class="v">200.8</div><div class="l">ACS</div></div>
+          <div class="pstat"><div class="v">1.00</div><div class="l">K/D</div></div>
+        </div>
+        <div class="player-body">
+          <div class="swot">
+            <div class="swot-row"><span class="icon s">S</span><span><b>Flex ใช้ได้ทั้งสองบทบาท</b> — Neon (entry) บนแผนที่ใหญ่ และ Cypher (sentinel) บนแผนที่ปิดเกมอย่าง Pearl/Haven</span></div>
+            <div class="swot-row"><span class="icon s">S</span><span><b>FKPR 0.13 / FDPR 0.14</b> — กล้า Trade เปิดให้ primmie ตามมา</span></div>
+            <div class="swot-row"><span class="icon w">W</span><span><b>K/D สมดุล</b> — 174K/174D ไม่มี Edge ที่ชัดเจน ฟอร์มไม่นิ่ง</span></div>
+            <div class="swot-row"><span class="icon w">W</span><span><b>HS% 26%</b> — ต่ำกว่ามาตรฐานสำหรับ Duelist อาจดวลแพ้ riflers ของ DRX</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crws -->
+      <div class="player scroll-reveal" data-num="04">
+        <div class="player-head">
+          <div class="player-tag">CONTROLLER · IGL</div>
+          <div class="player-name">Crws</div>
+          <div class="player-role">Astra · Brimstone · Deadlock</div>
+        </div>
+        <div class="player-stats">
+          <div class="pstat"><div class="v">0.86</div><div class="l">Rating</div></div>
+          <div class="pstat"><div class="v">157.3</div><div class="l">ACS</div></div>
+          <div class="pstat"><div class="v">0.77</div><div class="l">K/D</div></div>
+        </div>
+        <div class="player-body">
+          <div class="swot">
+            <div class="swot-row"><span class="icon s">S</span><span><b>CL% 27%</b> — Clutch ratio สูงที่สุดของทีม Crws ตั้งสติได้ดีในสถานการณ์กดดัน 1vX</span></div>
+            <div class="swot-row"><span class="icon s">S</span><span><b>APR 0.41</b> — รับบทบาท Smoke / IGL จัด utility ใช้ smokes อย่างประหยัดแต่แม่นยำ</span></div>
+            <div class="swot-row"><span class="icon w">W</span><span><b>Frag ต่ำ</b> — Rating 0.86 ต่ำที่สุดในทีม FS ต้องเลี่ยงการดวลตรงๆ กับ MaKo/HYUNMIN</span></div>
+            <div class="swot-row"><span class="icon w">W</span><span><b>HS% 23%</b> — ต่ำสุดในทีม การยิงไม่แม่นทำให้ฝั่งศัตรูสามารถเก็บ Crws ได้ฟรีในช่วงต้น round</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leviathan -->
+      <div class="player scroll-reveal" data-num="05">
+        <div class="player-head">
+          <div class="player-tag">SENTINEL · ANCHOR</div>
+          <div class="player-name">Leviathan</div>
+          <div class="player-role">Cypher · Viper · Omen</div>
+        </div>
+        <div class="player-stats">
+          <div class="pstat"><div class="v">0.90</div><div class="l">Rating</div></div>
+          <div class="pstat"><div class="v">168.1</div><div class="l">ACS</div></div>
+          <div class="pstat"><div class="v">0.94</div><div class="l">K/D</div></div>
+        </div>
+        <div class="player-body">
+          <div class="swot">
+            <div class="swot-row"><span class="icon s">S</span><span><b>HS% 36%</b> — สูงที่สุดในทีม Full Sense ปืนแม่นเมื่อได้ angle ที่นิ่ง</span></div>
+            <div class="swot-row"><span class="icon s">S</span><span><b>CL% 19% (8/43)</b> — เก็บ Clutches ได้บ่อยในเกม retake</span></div>
+            <div class="swot-row"><span class="icon w">W</span><span><b>FKPR 0.05</b> — แทบไม่เคยเปิด ต้องอาศัยตัวอื่นนำ ทำให้ DRX อ่านบทบาทได้ง่าย</span></div>
+            <div class="swot-row"><span class="icon w">W</span><span><b>Rating ลดในเกมล่าสุด</b> — ฟอร์มสะดุดในเกมแพ้ T1 และ RRQ ผู้ comment ในชุมชนคาดว่า Leviathan อาจเป็นจุดที่ DRX โจมตี</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============== TEAM CHARTS ============== -->
+<section>
+  <div class="container">
+    <div class="section-head scroll-reveal">
+      <div class="section-tag">TEAM PERFORMANCE · DATA VIZ</div>
+      <h2 class="section-title">PROFILE OF<br>A <em>CONTENDER</em></h2>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box scroll-reveal">
+        <h3>Player Ratings (R2.0)</h3>
+        <div class="chart-canvas-wrap">
+          <canvas id="ratingsChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-box scroll-reveal">
+        <h3>HS% & ACS Profile</h3>
+        <div class="chart-canvas-wrap">
+          <canvas id="profileChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== MAP POOL ============== -->
+<section id="maps" style="background:var(--bg-2)">
+  <div class="container">
+    <div class="section-head scroll-reveal">
+      <div class="section-tag">MAP POOL · STRENGTHS & WEAKNESSES</div>
+      <h2 class="section-title">THE BATTLEGROUND<br><em>ATLAS</em></h2>
+      <p class="section-sub">วิเคราะห์ผลงานของ Full Sense บนแผนที่แต่ละแผนใน Stage 1 — Bind, Split, Lotus คือพื้นที่เหล็ก, Breeze เป็นจุดอ่อนใหญ่ที่สุดที่ DRX อาจเลือก Pick</p>
+    </div>
+
+    <div class="map-grid">
+      <div class="map-card strong scroll-reveal">
+        <div class="map-bar"><div class="map-bar-fill" style="width:100%"></div></div>
+        <div class="map-head">
+          <div class="map-name">BIND</div>
+          <div class="map-wr s">100%</div>
+        </div>
+        <div class="map-body">
+          <div class="map-stat"><div class="l">W-L</div><div class="v">2-0</div></div>
+          <div class="map-stat"><div class="l">ATK / DEF RWin</div><div class="v">67% / 59%</div></div>
+        </div>
+        <div class="map-detail">
+          <div class="row"><span>vs T1</span><span style="color:var(--good)">13-7</span></div>
+          <div class="row"><span>vs DFM</span><span style="color:var(--good)">13-8</span></div>
+          <div class="row"><span>BEST POSSIBLE PICK</span><span>YES ✓</span></div>
+        </div>
+      </div>
+
+      <div class="map-card strong scroll-reveal">
+        <div class="map-bar"><div class="map-bar-fill" style="width:100%"></div></div>
+        <div class="map-head">
+          <div class="map-name">SPLIT</div>
+          <div class="map-wr s">100%</div>
+        </div>
+        <div class="map-body">
+          <div class="map-stat"><div class="l">W-L</div><div class="v">1-0</div></div>
+          <div class="map-stat"><div class="l">ATK / DEF RWin</div><div class="v">63% / 67%</div></div>
+        </div>
+        <div class="map-detail">
+          <div class="row"><span>vs ZETA</span><span style="color:var(--good)">13-7</span></div>
+          <div class="row"><span>SAMPLE SIZE</span><span>SMALL</span></div>
+          <div class="row"><span>POTENTIAL POCKET</span><span>YES ✓</span></div>
+        </div>
+      </div>
+
+      <div class="map-card strong scroll-reveal">
+        <div class="map-bar"><div class="map-bar-fill" style="width:100%"></div></div>
+        <div class="map-head">
+          <div class="map-name">LOTUS</div>
+          <div class="map-wr s">100%</div>
+        </div>
+        <div class="map-body">
+          <div class="map-stat"><div class="l">W-L</div><div class="v">1-0</div></div>
+          <div class="map-stat"><div class="l">ATK RWin</div><div class="v">85%</div></div>
+        </div>
+        <div class="map-detail">
+          <div class="row"><span>vs VARREL</span><span style="color:var(--good)">14-12 OT</span></div>
+          <div class="row"><span>ATK SIDE DOMINANT</span><span>11-2</span></div>
+          <div class="row"><span>DEF WEAK</span><span style="color:var(--bad)">23%</span></div>
+        </div>
+      </div>
+
+      <div class="map-card mid scroll-reveal">
+        <div class="map-bar"><div class="map-bar-fill" style="width:67%"></div></div>
+        <div class="map-head">
+          <div class="map-name">PEARL</div>
+          <div class="map-wr m">67%</div>
+        </div>
+        <div class="map-body">
+          <div class="map-stat"><div class="l">W-L</div><div class="v">2-1</div></div>
+          <div class="map-stat"><div class="l">RWin Both</div><div class="v">53/52%</div></div>
+        </div>
+        <div class="map-detail">
+          <div class="row"><span>vs DFM</span><span style="color:var(--good)">13-6</span></div>
+          <div class="row"><span>vs RRQ</span><span style="color:var(--good)">13-9</span></div>
+          <div class="row"><span>vs T1</span><span style="color:var(--bad)">5-13</span></div>
+        </div>
+      </div>
+
+      <div class="map-card mid scroll-reveal">
+        <div class="map-bar"><div class="map-bar-fill" style="width:50%"></div></div>
+        <div class="map-head">
+          <div class="map-name">HAVEN</div>
+          <div class="map-wr m">50%</div>
+        </div>
+        <div class="map-body">
+          <div class="map-stat"><div class="l">W-L</div><div class="v">1-1</div></div>
+          <div class="map-stat"><div class="l">DEF RWin</div><div class="v">65%</div></div>
+        </div>
+        <div class="map-detail">
+          <div class="row"><span>vs VARREL</span><span style="color:var(--good)">13-5</span></div>
+          <div class="row"><span>vs RRQ</span><span style="color:var(--bad)">10-13</span></div>
+          <div class="row"><span>ATK ปัญหา</span><span style="color:var(--bad)">44%</span></div>
+        </div>
+      </div>
+
+      <div class="map-card mid scroll-reveal">
+        <div class="map-bar"><div class="map-bar-fill" style="width:50%"></div></div>
+        <div class="map-head">
+          <div class="map-name">FRACTURE</div>
+          <div class="map-wr m">50%</div>
+        </div>
+        <div class="map-body">
+          <div class="map-stat"><div class="l">W-L</div><div class="v">1-1</div></div>
+          <div class="map-stat"><div class="l">DEF SUFFERS</div><div class="v">38%</div></div>
+        </div>
+        <div class="map-detail">
+          <div class="row"><span>vs ZETA</span><span style="color:var(--good)">13-6</span></div>
+          <div class="row"><span>vs RRQ</span><span style="color:var(--bad)">3-13</span></div>
+          <div class="row"><span>BAN CANDIDATE</span><span>POSSIBLE</span></div>
+        </div>
+      </div>
+
+      <div class="map-card weak scroll-reveal">
+        <div class="map-bar"><div class="map-bar-fill" style="width:0%"></div></div>
+        <div class="map-head">
+          <div class="map-name">BREEZE</div>
+          <div class="map-wr w">0%</div>
+        </div>
+        <div class="map-body">
+          <div class="map-stat"><div class="l">W-L</div><div class="v">0-1</div></div>
+          <div class="map-stat"><div class="l">RWin Both</div><div class="v">42/40%</div></div>
+        </div>
+        <div class="map-detail">
+          <div class="row"><span>vs T1</span><span style="color:var(--bad)">9-13</span></div>
+          <div class="row"><span>JETT/HARBOR setup</span><span>TESTING</span></div>
+          <div class="row"><span>SHOULD BAN</span><span style="color:var(--bad)">MUST ✗</span></div>
+        </div>
+      </div>
+
+      <div class="map-card untested scroll-reveal">
+        <div class="map-bar"><div class="map-bar-fill" style="width:5%"></div></div>
+        <div class="map-head">
+          <div class="map-name">ASCENT</div>
+          <div class="map-wr u">N/A</div>
+        </div>
+        <div class="map-body">
+          <div class="map-stat"><div class="l">W-L</div><div class="v">0-0</div></div>
+          <div class="map-stat"><div class="l">RECORD</div><div class="v">UNPLAYED</div></div>
+        </div>
+        <div class="map-detail">
+          <div class="row"><span>STAGE 1 SAMPLE</span><span>0 GAMES</span></div>
+          <div class="row"><span>RISK FACTOR</span><span style="color:var(--warn)">UNKNOWN</span></div>
+          <div class="row"><span>RECOMMENDATION</span><span>BAN</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== KIWOOM DRX ANALYSIS ============== -->
+<section id="opponent">
+  <div class="container">
+    <div class="section-head scroll-reveal">
+      <div class="section-tag">OPPONENT BREAKDOWN · UPPER ROUND 1</div>
+      <h2 class="section-title">SCOUTING<br><em>KIWOOM DRX</em></h2>
+      <p class="section-sub">DRX จบ Alpha Group ที่อันดับ 2 ด้วยสถิติ 4-1 — แพ้แค่ Paper Rex ในนัดสุดท้าย โครงสร้างทีมชัดเจน นำโดย MaKo (Controller) และ HYUNMIN (Duelist) ในบทบาทใหม่ที่ฟอร์มจัดจ้านที่สุดในรอบหลายปี</p>
+    </div>
+
+    <!-- VS BANNER -->
+    <div class="versus-banner scroll-reveal">
+      <div class="vb-team fs">
+        <div class="logo"><img src="assets/full-sense-logo.png" alt="Full Sense"></div>
+        <h3>FULL SENSE</h3>
+        <div class="stats-line">
+          <span>3W-2L</span>
+          <span>OMEGA #2</span>
+        </div>
+      </div>
+      <div>
+        <div class="vb-vs">VS</div>
+        <div class="vb-meta">PLAYOFFS · UPPER R1 · BO3</div>
+      </div>
+      <div class="vb-team krx">
+        <div class="logo"><img src="assets/kiwoom-drx-logo.png" alt="Kiwoom DRX"></div>
+        <h3>KIWOOM DRX</h3>
+        <div class="stats-line">
+          <span>4W-1L</span>
+          <span>ALPHA #2</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HEAD TO HEAD -->
+    <div class="section-head scroll-reveal" style="margin-top:60px;margin-bottom:24px">
+      <div class="section-tag">HEAD-TO-HEAD HISTORY</div>
+      <h2 class="section-title" style="font-size:clamp(28px,4vw,48px)">DRX LEADS <em>2-1</em> ALL-TIME</h2>
+      <p class="section-sub">ทั้งสองทีมเจอกันสามครั้ง — สองครั้งล่าสุดใน Pacific Kickoff 2026 แลกกันคนละนัด แต่ DRX ตบ FS ตกรอบใน LR3 ส่วนเกม AfreecaTV 2023 เป็น roster ยุคเก่า (ก่อน Talon Era)</p>
+    </div>
+    <div class="h2h">
+      <div class="h2h-item l scroll-reveal">
+        <div class="ev">VCT 26 Pacific Kickoff · LR3</div>
+        <div class="res l">0-2</div>
+        <div class="dt">FEB 8 · 2026 · FS LOSS</div>
+      </div>
+      <div class="h2h-item scroll-reveal">
+        <div class="ev">VCT 26 Pacific Kickoff · UR2</div>
+        <div class="res w">2-1</div>
+        <div class="dt">JAN 24 · 2026 · FS WIN</div>
+      </div>
+      <div class="h2h-item l scroll-reveal">
+        <div class="ev">AfreecaTV League · Opening A</div>
+        <div class="res l">1-2</div>
+        <div class="dt">DEC 5 · 2023 · FS LOSS</div>
+      </div>
+    </div>
+
+    <!-- COMPARE TABLE -->
+    <div class="compare-table scroll-reveal" style="margin-top:50px">
+      <div class="ct-row head">
+        <div>FULL SENSE</div>
+        <div>METRIC</div>
+        <div style="text-align:left">KIWOOM DRX</div>
+      </div>
+      <div class="ct-row">
+        <div><span class="val win">3-2</span></div>
+        <div>SERIES W-L</div>
+        <div class="right"><span class="val win right">4-1</span></div>
+      </div>
+      <div class="ct-row">
+        <div><span class="val">primmie · 1.31</span></div>
+        <div>TOP PLAYER</div>
+        <div class="right"><span class="val right">MaKo · 1.15</span></div>
+      </div>
+      <div class="ct-row">
+        <div>270.8</div>
+        <div>BEST ACS</div>
+        <div class="right">223.3 (HYUNMIN)</div>
+      </div>
+      <div class="ct-row">
+        <div>Bind · Split · Lotus</div>
+        <div>STRONGEST MAPS</div>
+        <div class="right">Pearl · Fracture · Lotus</div>
+      </div>
+      <div class="ct-row">
+        <div>Breeze (0%)</div>
+        <div>WEAKEST MAP</div>
+        <div class="right">Breeze (0%)</div>
+      </div>
+      <div class="ct-row">
+        <div>1.40 (primmie)</div>
+        <div>HIGHEST K/D</div>
+        <div class="right">1.13 (MaKo)</div>
+      </div>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="section-head scroll-reveal" style="margin-top:60px;margin-bottom:0">
+      <div class="section-tag">TACTICAL INSIGHTS</div>
+      <h2 class="section-title" style="font-size:clamp(28px,4vw,48px)">KEYS TO <em>VICTORY</em></h2>
+    </div>
+
+    <div class="insight-grid">
+      <div class="insight adv scroll-reveal">
+        <div class="tag">ADVANTAGE · FS</div>
+        <h4>Map Pool Trap</h4>
+        <p>DRX ยังไม่มีข้อมูลบน Bind และ Split (0 เกมใน Stage 1) ขณะที่ FS ชนะรวด 100% ทั้งสองแผนที่ → เป็น Pick Premium สำหรับ Full Sense ในรอบ Veto</p>
+      </div>
+      <div class="insight adv scroll-reveal">
+        <div class="tag">ADVANTAGE · FS</div>
+        <h4>Star Power Edge</h4>
+        <p>primmie (R 1.31) แซง MaKo และ HYUNMIN (1.15 / 1.09) ของ DRX อย่างชัดเจน — หาก primmie อยู่ในฟอร์ม สามารถยึดเกมได้คนเดียว</p>
+      </div>
+      <div class="insight risk scroll-reveal">
+        <div class="tag">RISK · FS</div>
+        <h4>Pearl คือสนามรบจริง</h4>
+        <p>FS ชนะ Pearl 67% (2-1) แต่ DRX ก็เล่น Lotus ได้ 67% (2-1) — ทั้งสองแผนที่นี้คือ Battleground ที่ทั้งสองทีมไม่สามารถ Ban ได้ทั้งคู่</p>
+      </div>
+      <div class="insight risk scroll-reveal">
+        <div class="tag">RISK · FS</div>
+        <h4>Fracture เป็นพิษ</h4>
+        <p>DRX ชนะ Fracture 67% Round Win 70% ฝ่าย ATK — FS แพ้ RRQ บน Fracture 3-13 อย่างยับ ห้าม Pick / ควร Ban เด็ดขาด</p>
+      </div>
+      <div class="insight neutral scroll-reveal">
+        <div class="tag">NEUTRAL · DRX</div>
+        <h4>Pearl คือเครื่องมือ DRX</h4>
+        <p>Kiwoom DRX 100% (2-0) บน Pearl ทั้ง vs Team Secret และ Gen.G ฟ้าผ่า ATK 71% Round Win → DRX จะ Pick Pearl แน่นอน</p>
+      </div>
+      <div class="insight neutral scroll-reveal">
+        <div class="tag">NEUTRAL · DRX</div>
+        <h4>Lotus เป็น Hidden Strength</h4>
+        <p>DRX มี DEF Round Win 64% บน Lotus — หากเล่นฝั่ง DEF ก่อน FS จะลำบากมากใน first half เพราะ FS DEF Lotus ได้แค่ 23%</p>
+      </div>
+      <div class="insight risk scroll-reveal">
+        <div class="tag">RISK · FS</div>
+        <h4>ฟอร์มขาลง</h4>
+        <p>FS แพ้ 2 นัดล่าสุด vs RRQ (1-2) และ vs T1 (1-2) ฟอร์มไม่นิ่งและ Leviathan / Crws ผลงานตก — ความ Self-Confidence อาจเป็นปัญหา</p>
+      </div>
+    </div>
+
+    <!-- PREDICT -->
+    <div class="predict-box scroll-reveal" id="predict">
+      <h3>เส้นทางสู่ชัยชนะของ Full Sense</h3>
+      <p>DRX มาในฐานะเต็งครึ่งใหญ่ของรอบนี้ (KRX odds 1.64 vs FS 2.18) ทั้งสองทีมเคยเจอกันสองครั้งใน Pacific Kickoff — Full Sense ชนะ 2-1 ใน UR2 แต่กลับมาแพ้ 0-2 อย่างขาดลอยใน LR3 (Corrode 3-13, Abyss 9-13) จนตกรอบ — แสดงให้เห็นว่า DRX วิเคราะห์ FS ได้เร็วและแก้เกมได้ กุญแจสำคัญรอบนี้คือต้องไม่ให้ FS ตกหลุมเดิม โดยบังคับให้ Series เข้าสู่แผนที่ Decider แล้วเลือก Bind หรือ Split ในตำแหน่ง Pick สุดท้าย</p>
+      
+      <div class="predict-tactic">
+        <div class="tactic">
+          <div class="l">VETO STRATEGY</div>
+          <h4>BAN FRACTURE + ASCENT</h4>
+          <p>FS ควร Ban Fracture (DRX 67%) และ Ascent (no data ทั้งสองทีม → ไม่ปลอดภัย)</p>
+        </div>
+        <div class="tactic">
+          <div class="l">PICK STRATEGY</div>
+          <h4>PICK BIND</h4>
+          <p>FS 100% บน Bind, DRX ไม่มีข้อมูล Pick ที่มี Edge สูงที่สุดทั้ง preparation และผลงาน</p>
+        </div>
+        <div class="tactic">
+          <div class="l">DECIDER PREP</div>
+          <h4>SPLIT > LOTUS</h4>
+          <p>หาก Decider ต้องเลือก ขอ Split (FS 100%) ดีกว่า Lotus เพราะ DRX แข็งทั้ง DEF บน Lotus</p>
+        </div>
+        <div class="tactic">
+          <div class="l">PLAYER FOCUS</div>
+          <h4>FREE primmie</h4>
+          <p>ป้อน util ให้ primmie กดสุด JitBoyS / Killua ต้องเปิดทางทั้งฝั่ง ATK และ DEF</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer>
+  <div class="container">
+    <p>FULL SENSE × VCT 2026 PACIFIC TRACKER</p>
+    <p>Data sourced from <a href="https://www.vlr.gg/event/2775/vct-2026-pacific-stage-1">VLR.GG</a> · Updated MAY 06 · 2026</p>
+    <p style="margin-top:10px">UNOFFICIAL FAN-MADE TRACKER · NOT AFFILIATED WITH RIOT GAMES OR FULL SENSE</p>
+  </div>
+</footer>
+
+<script>
+// scroll reveal
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+    }
+  });
+},{threshold:0.1, rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.scroll-reveal').forEach(el=>observer.observe(el));
+
+// charts
+window.addEventListener('load',()=>{
+  const fontFamily="'Space Mono',monospace";
+  Chart.defaults.color='#9999a8';
+  Chart.defaults.borderColor='#2a2a38';
+  Chart.defaults.font.family=fontFamily;
+
+  // ratings chart
+  const r=document.getElementById('ratingsChart');
+  if(r){
+    new Chart(r,{
+      type:'bar',
+      data:{
+        labels:['primmie','Killua','JitBoyS','Leviathan','Crws'],
+        datasets:[{
+          label:'R2.0 Rating',
+          data:[1.31,1.11,0.98,0.90,0.86],
+          backgroundColor:[
+            '#ff7a1a','#ff9a4a','#ffd400','#ffaa3b','#9999a8'
+          ],
+          borderRadius:0,
+          borderWidth:0
+        }]
+      },
+      options:{
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            backgroundColor:'#0a0a0f',
+            borderColor:'#ff7a1a',
+            borderWidth:1,
+            titleFont:{family:fontFamily},
+            bodyFont:{family:fontFamily}
+          }
+        },
+        scales:{
+          x:{
+            grid:{display:false},
+            ticks:{font:{family:fontFamily,size:11}}
+          },
+          y:{
+            beginAtZero:true,
+            max:1.5,
+            grid:{color:'#1c1c28'},
+            ticks:{font:{family:fontFamily,size:11}}
+          }
+        }
+      }
+    });
+  }
+
+  // profile (radar)
+  const p=document.getElementById('profileChart');
+  if(p){
+    new Chart(p,{
+      type:'radar',
+      data:{
+        labels:['ACS','HS%','K/D','KAST%','APR','FKPR'],
+        datasets:[
+          {
+            label:'primmie',
+            data:[270.8/3,34,1.40*40,76,0.94*70,0.20*200],
+            backgroundColor:'rgba(255,122,26,0.18)',
+            borderColor:'#ff7a1a',
+            borderWidth:2,
+            pointBackgroundColor:'#ff7a1a',
+            pointRadius:3
+          },
+          {
+            label:'Killua',
+            data:[211.1/3,33,1.11*40,76,0.73*70,0.07*200],
+            backgroundColor:'rgba(255,212,0,0.10)',
+            borderColor:'#ffd400',
+            borderWidth:2,
+            pointBackgroundColor:'#ffd400',
+            pointRadius:3
+          },
+          {
+            label:'Leviathan',
+            data:[168.1/3,36,0.94*40,68,0.63*70,0.05*200],
+            backgroundColor:'rgba(46,229,157,0.10)',
+            borderColor:'#2ee59d',
+            borderWidth:2,
+            pointBackgroundColor:'#2ee59d',
+            pointRadius:3
+          }
+        ]
+      },
+      options:{
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{
+            position:'bottom',
+            labels:{
+              font:{family:fontFamily,size:11},
+              boxWidth:10,
+              padding:14
+            }
+          }
+        },
+        scales:{
+          r:{
+            angleLines:{color:'#1c1c28'},
+            grid:{color:'#1c1c28'},
+            pointLabels:{font:{family:fontFamily,size:11}},
+            ticks:{display:false},
+            min:0,
+            max:100
+          }
+        }
+      }
+    });
+  }
+});
+</script>
+
+</body>
+</html>
