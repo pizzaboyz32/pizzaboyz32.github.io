@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir D:\\\\vlrdata)",
+      "WebFetch(domain:www.vlr.gg)",
+      "Bash(curl -s \"https://vlrggapi.vercel.app/v2/match/details?match_id=666489\" -o /d/vlrdata/api_response.json)",
+      "Bash(ls -la \"/d/Download/\" | grep -i subtitle | head -5)",
+      "Bash(curl -s \"https://vlrggapi.vercel.app/v2/match/details?match_id=666488\" -o /d/vlrdata/api_666488.json)",
+      "Bash(curl -s \"https://owcdn.net/img/629f17f51e7a3.png\" -o \"/d/vlrdata/RRQ/logo.png\")",
+      "Bash(curl -s \"https://owcdn.net/img/629f316ddd4dd.png\" -o \"/d/vlrdata/GE/logo.png\")",
+      "Bash(curl -s \"https://media.valorant-api.com/agents/ded3520f-4264-bfed-162d-b080e2abccf9/displayicon.png\" -o \"/d/vlrdata/agents data/sova.png\")",
+      "Bash(curl -s \"https://media.valorant-api.com/agents/707eab51-4836-f488-046a-cda6bf494859/displayicon.png\" -o \"/d/vlrdata/agents data/viper.png\")",
+      "Bash(curl -s \"https://media.valorant-api.com/agents/601dbbe7-43ce-be57-2a40-4abd24953621/displayicon.png\" -o \"/d/vlrdata/agents data/kayo.png\")",
+      "Bash(curl -s \"https://vlrggapi.vercel.app/v2/match/details?match_id=666490\" -o /d/vlrdata/api_666490.json)",
+      "Bash(curl -s \"https://vlrggapi.vercel.app/v2/match/details?match_id=666491\" -o /d/vlrdata/api_666491.json)",
+      "Bash(curl -sS \"https://vlrggapi.vercel.app/v2/match/details?match_id=666490\")",
+      "Bash(curl -sS \"https://vlrggapi.vercel.app/v2/match/details?match_id=666491\")",
+      "Bash(curl -s \"https://owcdn.net/img/62bbeba74d5cb.png\" -o /d/vlrdata/PRX/logo.png)",
+      "Bash(curl -s \"https://owcdn.net/img/62fe0b8f6b084.png\" -o /d/vlrdata/T1/logo.png)",
+      "Bash(curl -s \"https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/displayicon.png\" -o \"/d/vlrdata/agents data/tejo.png\")"
+    ]
+  }
+}
