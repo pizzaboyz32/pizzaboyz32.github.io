@@ -4,7 +4,7 @@ window.matchData = {
     t1: { name: "T1", tag: "KOREA · T1", shortTag: "T1", logo: "T1/logo.png", color: "#6cc4ff", colorRgb: "108,196,255", score: 0, isWinner: false },
     t2: { name: "Full Sense", tag: "THAILAND · FS", shortTag: "FS", logo: "FULLSENSE/logo.png", color: "#ff4655", colorRgb: "255,70,85", score: 2, isWinner: true }
   },
-  vetoDesc: "FS เลือก Pearl ส่ง Primmie กด Operator · T1 เลือก Lotus หวังใช้ Tactical แต่กลับเจอ Leviathan แก้ตัวด้วย Ultimate Viper",
+  vetoDesc: "FS เลือก Pearl ส่ง Primmie กด Operator · T1 เลือก Lotus หวังใช้ Tactical แต่กลับเจอ Leviathan แผงฤทธิ์ กระโดดจุ่มอัลติ Viper",
   veto: [
     { team: "t2", action: "ban", map: "ascent", mapFile: "ascent.jpg" },
     { team: "t1", action: "ban", map: "fracture" },
