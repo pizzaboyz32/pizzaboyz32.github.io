@@ -17,7 +17,10 @@
       "Bash(curl -sS \"https://vlrggapi.vercel.app/v2/match/details?match_id=666491\")",
       "Bash(curl -s \"https://owcdn.net/img/62bbeba74d5cb.png\" -o /d/vlrdata/PRX/logo.png)",
       "Bash(curl -s \"https://owcdn.net/img/62fe0b8f6b084.png\" -o /d/vlrdata/T1/logo.png)",
-      "Bash(curl -s \"https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/displayicon.png\" -o \"/d/vlrdata/agents data/tejo.png\")"
+      "Bash(curl -s \"https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/displayicon.png\" -o \"/d/vlrdata/agents data/tejo.png\")",
+      "Bash(curl -sS \"https://vlrggapi.vercel.app/v2/match/details?match_id=666494\")",
+      "Bash(node -e ' *)",
+      "Bash(ls -la \"C:\\\\Users\\\\pizza\\\\.claude\\\\projects\\\\D--\\\\memory\\\\\" 2>/dev/null)"
     ]
   }
 }
