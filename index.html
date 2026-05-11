@@ -235,6 +235,36 @@
 
   .cs2-line { font-size: 13px; opacity: 0.85; margin: 6px 0; }
   .cs2-line strong { color: #ffdd44; }
+
+  /* Countdown overlay (during tracking auto-follow phase) */
+  #countdown-display {
+    position: fixed; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 180px; font-weight: 800;
+    color: rgba(255,255,255,0.38);
+    text-shadow: 0 0 28px rgba(255,255,255,0.25), 0 0 60px rgba(0,255,136,0.15);
+    z-index: 8; pointer-events: none;
+    letter-spacing: 6px;
+    font-family: 'Segoe UI', 'Sarabun', Tahoma, sans-serif;
+    animation: cd-pulse 1s ease-out;
+  }
+  #countdown-display.go { font-size: 120px; color: rgba(0,255,136,0.55); letter-spacing: 12px; }
+  @keyframes cd-pulse {
+    0%   { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
+    30%  { transform: translate(-50%, -50%) scale(1.0); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.0); opacity: 1; }
+  }
+  #countdown-sub {
+    position: fixed; left: 50%; top: calc(50% + 130px);
+    transform: translateX(-50%);
+    font-size: 16px; color: rgba(255,255,255,0.7);
+    z-index: 8; pointer-events: none;
+    text-align: center; max-width: 80vw; line-height: 1.6;
+    background: rgba(10,10,20,0.55);
+    padding: 8px 18px; border-radius: 6px;
+    border: 1px solid rgba(0,255,136,0.25);
+    backdrop-filter: blur(4px);
+  }
 </style>
 </head>
 <body>
@@ -267,6 +297,9 @@
 </div>
 
 <div id="hint" class="hidden">คลิกซ้าย = ยิง &nbsp;|&nbsp; ESC = เมนูปรับ Sensitivity</div>
+
+<div id="countdown-display" class="hidden">5</div>
+<div id="countdown-sub" class="hidden">กล้องกำลังล็อกเป้าให้ — จดจังหวะและน้ำหนักการเคลื่อนของเป้าไว้</div>
 
 <!-- เมนูเริ่มต้น -->
 <div id="start-menu" class="overlay">
@@ -366,16 +399,19 @@
 <div id="tracking-intro" class="overlay hidden">
   <div class="panel">
     <h1>Phase 1 — Tracking</h1>
-    <p>เป้าหมาย: <strong>เล็ง crosshair ให้อยู่บนเป้า</strong>ที่เคลื่อนที่ไปมา 30 วินาที</p>
+    <p>ในช่วงนี้จะมีการ <strong>นับถอยหลัง 5 4 3 2 1</strong> ก่อน<br>ระหว่างนับถอยหลัง <strong>กล้องจะเคลื่อนตามเป้าให้อัตโนมัติ</strong></p>
     <div class="motion tracking-motion">
       <div class="track-target"></div>
       <div class="track-cursor"></div>
     </div>
-    <p class="small" style="text-align:left; line-height:1.9;">
-      • ปล่อย <strong>ข้อมือและแขนให้เป็นธรรมชาติ</strong> ไม่เกร็ง<br>
-      • <strong>ไม่ต้องพยายามกระตุกเมาส์</strong>เพื่อให้เข้าเป้า<br>
-      • ปล่อยเมาส์ให้ <strong>ไหลตามเป้าอย่างนุ่มนวล</strong><br>
-      • หาจังหวะของตัวเองที่รู้สึกลื่นที่สุด
+    <p style="text-align:left; line-height:1.85;">
+      ให้นึกสภาพว่ากำลัง <strong>ควบคุมเป้าหมาย</strong> อยู่ในช่วงเวลานับถอยหลัง
+      พยายามออกแรงตามตัวเองคิดว่า <strong>ต้องออกแรงเท่านี้</strong>เพื่อล็อกตาม
+    </p>
+    <p style="text-align:left; line-height:1.85;">
+      หลังจากนับถอยหลังเสร็จ พยายามเลื่อนตามแรงที่คิด<br>
+      • ถ้า <strong style="color:#ffdd44;">ตามไม่ทัน</strong> แสดงว่า <strong>ช้าไป</strong><br>
+      • ถ้า <strong style="color:#ffdd44;">เลยเป้าหมาย</strong> แสดงว่า <strong>เร็วไป</strong>
     </p>
     <button id="tracking-intro-start">เริ่ม Tracking</button>
   </div>
@@ -484,6 +520,11 @@
 
   const TRACKING_DURATION = 30;
   let trackingTimer = 0;
+  // Tracking sub-mode: 'countdown' (camera auto-follows, mouse disabled) | 'free' (player aim)
+  let trackingMode = 'free';
+  const COUNTDOWN_FROM = 5;        // counts 5..4..3..2..1
+  const COUNTDOWN_GO_HOLD = 0.6;   // seconds to show "เริ่ม!" after 1
+  let countdownTime = 0;           // ticks downward from COUNTDOWN_FROM + COUNTDOWN_GO_HOLD
 
   const FLICK_TARGET_COUNT = 20;
   let flickAttempts = 0;
@@ -593,6 +634,8 @@
   document.addEventListener('mousemove', (e) => {
     if (!pointerLocked) return;
     if (phase !== 'tracking' && phase !== 'flicking') return;
+    // During countdown, camera is driven automatically — ignore mouse input entirely.
+    if (phase === 'tracking' && trackingMode === 'countdown') return;
 
     // Discard the first frames after lock — browsers can deliver huge phantom deltas there.
     if (justLockedSkipFrames > 0) { justLockedSkipFrames--; return; }
@@ -681,6 +724,8 @@
     chLengthVal: document.querySelectorAll('.js-ch-length-val'),
     chColor: document.querySelectorAll('.js-ch-color'),
     chDot: document.querySelectorAll('.js-ch-dot'),
+    countdownDisplay: document.getElementById('countdown-display'),
+    countdownSub: document.getElementById('countdown-sub'),
   };
 
   const allOverlays = [els.startMenu, els.pauseMenu, els.trackingIntro, els.trackingQ, els.flickingIntro, els.flickingQ, els.dpiAdvice, els.resultScreen];
@@ -710,8 +755,13 @@
 
   function updateProgress() {
     if (phase === 'tracking') {
-      els.phaseInfo.textContent = 'Tracking';
-      els.progressInfo.textContent = `${Math.ceil(trackingTimer)} วินาที`;
+      if (trackingMode === 'countdown') {
+        els.phaseInfo.textContent = 'Tracking (ดูจังหวะ)';
+        els.progressInfo.textContent = 'กำลังนับถอยหลัง...';
+      } else {
+        els.phaseInfo.textContent = 'Tracking';
+        els.progressInfo.textContent = `${Math.ceil(trackingTimer)} วินาที`;
+      }
     } else if (phase === 'flicking') {
       els.phaseInfo.textContent = 'Flicking';
       const stage = flickShowingCenter ? ' (รีเป้ากลาง)' : '';
@@ -728,6 +778,42 @@
     els.hud.classList.add('hidden');
     els.crosshair.classList.add('hidden');
     els.hint.classList.add('hidden');
+    hideCountdown();
+  }
+
+  // ---- countdown helpers ----
+  let _lastCountdownLabel = '';
+  function showCountdown(label, isGo) {
+    if (label !== _lastCountdownLabel) {
+      // restart pulse animation each tick
+      els.countdownDisplay.style.animation = 'none';
+      // force reflow
+      void els.countdownDisplay.offsetWidth;
+      els.countdownDisplay.style.animation = '';
+      _lastCountdownLabel = label;
+    }
+    els.countdownDisplay.textContent = label;
+    els.countdownDisplay.classList.toggle('go', !!isGo);
+    els.countdownDisplay.classList.remove('hidden');
+    els.countdownSub.classList.remove('hidden');
+  }
+  function hideCountdown() {
+    els.countdownDisplay.classList.add('hidden');
+    els.countdownSub.classList.add('hidden');
+    _lastCountdownLabel = '';
+  }
+
+  // Aim the camera directly at a world-space point (used during countdown auto-track).
+  function aimAt(targetPos) {
+    const dx = targetPos.x - camera.position.x;
+    const dy = targetPos.y - camera.position.y;
+    const dz = targetPos.z - camera.position.z;
+    const distXZ = Math.sqrt(dx * dx + dz * dz);
+    yaw = Math.atan2(-dx, -dz);
+    pitch = Math.atan2(dy, distXZ);
+    pitch = Math.max(-PI_2 + 0.05, Math.min(PI_2 - 0.05, pitch));
+    camera.rotation.y = yaw;
+    camera.rotation.x = pitch;
   }
 
   // ================= PHASE LOGIC =================
@@ -775,10 +861,15 @@
   function startTracking() {
     cleanupTargets();
     phase = 'tracking';
+    trackingMode = 'countdown';
+    countdownTime = COUNTDOWN_FROM + COUNTDOWN_GO_HOLD;
     trackingTimer = TRACKING_DURATION;
     spawnTrackingTarget();
     hideAllOverlays();
     showHud();
+    // Aim camera at target immediately so the very first frame is locked on.
+    if (trackingTarget) aimAt(trackingTarget.position);
+    showCountdown(String(COUNTDOWN_FROM), false);
     updateProgress();
     lockPointer();
   }
@@ -786,6 +877,8 @@
   function endTracking() {
     cleanupTargets();
     phase = 'tracking-q';
+    trackingMode = 'free';
+    hideCountdown();
     updateSensDisplay();
     showOverlay(els.trackingQ);
     unlockPointer();
@@ -1079,9 +1172,29 @@
       trackingTarget.position.y = ud.cy + Math.sin(ud.t * ud.speedY + 0.7) * ud.rangeY;
       trackingTarget.position.z = -14.5;
 
-      trackingTimer -= dt;
-      updateProgress();
-      if (trackingTimer <= 0) endTracking();
+      if (trackingMode === 'countdown') {
+        // Camera auto-follows the target while the player observes feel/force.
+        aimAt(trackingTarget.position);
+        countdownTime -= dt;
+        if (countdownTime > COUNTDOWN_GO_HOLD) {
+          // still counting 5..4..3..2..1
+          const remaining = countdownTime - COUNTDOWN_GO_HOLD;
+          const label = String(Math.max(1, Math.ceil(remaining)));
+          showCountdown(label, false);
+        } else if (countdownTime > 0) {
+          // "เริ่ม!" hold
+          showCountdown('เริ่ม!', true);
+        } else {
+          // countdown complete — hand control back to the player
+          trackingMode = 'free';
+          hideCountdown();
+          updateProgress();
+        }
+      } else {
+        trackingTimer -= dt;
+        updateProgress();
+        if (trackingTimer <= 0) endTracking();
+      }
     }
 
     // Slowly rotate target rings for visibility
