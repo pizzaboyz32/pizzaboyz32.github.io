@@ -286,6 +286,10 @@
     <div class="label">Progress</div>
     <div class="value" id="progress-info">-</div>
   </div>
+  <div class="row" id="rawinput-row">
+    <div class="label">Raw Mouse Input</div>
+    <div class="value" id="rawinput-info" style="font-size: 14px;">กำลังตรวจสอบ...</div>
+  </div>
 </div>
 
 <div id="crosshair" class="crosshair-render hidden">
@@ -669,11 +673,44 @@
     }
   });
 
+  // Whether the browser supports unadjustedMovement (raw mouse input that
+  // bypasses OS-level pointer acceleration & Windows sensitivity scaling).
+  let rawInputSupported = null; // null = unknown yet, true/false after first try
+
   function lockPointer() {
-    if (!pointerLocked && !lockRequestPending) {
-      lockRequestPending = true;
-      try { canvas.requestPointerLock(); } catch (e) {}
-      setTimeout(() => { lockRequestPending = false; }, 200);
+    if (pointerLocked || lockRequestPending) return;
+    lockRequestPending = true;
+
+    const finish = () => setTimeout(() => { lockRequestPending = false; }, 200);
+
+    // Prefer raw, unaccelerated mouse input. Chromium-based browsers return a
+    // Promise from requestPointerLock when called with options. If the option
+    // is unsupported (Firefox/Safari, or older Chrome) we fall back silently.
+    try {
+      const opts = { unadjustedMovement: true };
+      const p = canvas.requestPointerLock(opts);
+      if (p && typeof p.then === 'function') {
+        p.then(() => {
+          rawInputSupported = true;
+          updateRawInputDisplay();
+          finish();
+        }).catch((err) => {
+          // unadjustedMovement not supported → retry without options
+          rawInputSupported = false;
+          updateRawInputDisplay();
+          try { canvas.requestPointerLock(); } catch (e) {}
+          finish();
+        });
+      } else {
+        // Older API returned undefined — assume the option was ignored.
+        finish();
+      }
+    } catch (e) {
+      // Browser threw on the options arg → plain lock.
+      try { canvas.requestPointerLock(); } catch (e2) {}
+      rawInputSupported = false;
+      updateRawInputDisplay();
+      finish();
     }
   }
   function unlockPointer() {
@@ -726,7 +763,22 @@
     chDot: document.querySelectorAll('.js-ch-dot'),
     countdownDisplay: document.getElementById('countdown-display'),
     countdownSub: document.getElementById('countdown-sub'),
+    rawInputInfo: document.getElementById('rawinput-info'),
   };
+
+  function updateRawInputDisplay() {
+    if (!els.rawInputInfo) return;
+    if (rawInputSupported === true) {
+      els.rawInputInfo.textContent = 'เปิดอยู่ (อ่านจาก sensor ตรง)';
+      els.rawInputInfo.style.color = '#00ff88';
+    } else if (rawInputSupported === false) {
+      els.rawInputInfo.textContent = 'ไม่รองรับ (ใช้ค่าจาก Windows)';
+      els.rawInputInfo.style.color = '#ff8866';
+    } else {
+      els.rawInputInfo.textContent = 'กำลังตรวจสอบ...';
+      els.rawInputInfo.style.color = '#aaaaaa';
+    }
+  }
 
   const allOverlays = [els.startMenu, els.pauseMenu, els.trackingIntro, els.trackingQ, els.flickingIntro, els.flickingQ, els.dpiAdvice, els.resultScreen];
   function hideAllOverlays() { allOverlays.forEach(o => o.classList.add('hidden')); }
@@ -1214,6 +1266,7 @@
 
   // Init
   updateSensDisplay();
+  updateRawInputDisplay();
   animate();
 })();
 </script>
