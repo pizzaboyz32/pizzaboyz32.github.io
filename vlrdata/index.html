@@ -132,6 +132,43 @@
   .section-head h2 span{color:var(--accent)}
   .section-head .meta{color:var(--muted);max-width:480px;font-size:14px}
 
+  /* ===== FILTER BAR ===== */
+  .filter-bar{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    margin-bottom:28px;padding:14px 18px;
+    background:linear-gradient(180deg,#141a24,#10141c);
+    border:1px solid var(--line);border-radius:12px
+  }
+  .filter-bar .filter-label{
+    font-family:'Rajdhani';font-weight:700;font-size:11px;letter-spacing:3px;
+    color:var(--muted);text-transform:uppercase;padding-right:6px;border-right:1px solid var(--line)
+  }
+  .filter-bar .chips{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+  .filter-chip{
+    display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    padding:6px 12px 6px 6px;background:rgba(255,255,255,.03);
+    border:1px solid var(--line);border-radius:99px;
+    font-family:'Rajdhani';font-weight:600;font-size:12px;letter-spacing:2px;
+    color:#cfd5e2;text-transform:uppercase;transition:all .2s ease;user-select:none
+  }
+  .filter-chip img{width:22px;height:22px;object-fit:contain;background:#0a0e15;border-radius:50%;padding:2px}
+  .filter-chip.all{padding:6px 14px}
+  .filter-chip:hover{border-color:rgba(255,70,85,.45);color:#fff}
+  .filter-chip.active{
+    background:rgba(255,70,85,.12);border-color:var(--accent);color:#fff;
+    box-shadow:0 0 0 1px rgba(255,70,85,.25)
+  }
+  .filter-bar .count{
+    font-family:'Rajdhani';font-size:12px;letter-spacing:2px;color:var(--muted);
+    text-transform:uppercase;white-space:nowrap
+  }
+  .filter-bar .count b{color:#fff;font-weight:700}
+  .match-grid .empty-state{
+    grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);
+    border:1px dashed var(--line);border-radius:12px;font-family:'Rajdhani';
+    font-size:14px;letter-spacing:2px;text-transform:uppercase
+  }
+
   .match-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(420px, 1fr));gap:22px}
   .match-card{
     background:linear-gradient(180deg,#161c26,#10141c);
@@ -277,10 +314,27 @@
       <p class="meta">เลือกแมตช์ที่ต้องการอ่านบทวิเคราะห์เต็ม — แต่ละหน้ามี Stats รายผู้เล่น, Round Flow, Entry Duels, Kill Matchup Matrix และบทวิเคราะห์เชิงลึก</p>
     </div>
 
-    <div class="match-grid">
+    <!-- FILTER BAR -->
+    <div class="filter-bar" id="filterBar">
+      <span class="filter-label">Filter by Team</span>
+      <div class="chips">
+        <span class="filter-chip all active" data-team="ALL">All Matches</span>
+        <span class="filter-chip" data-team="PRX"><img src="Paper rex/logo.png" alt="">PRX</span>
+        <span class="filter-chip" data-team="KRX"><img src="Kiwoom DRX/logo.png" alt="">KRX</span>
+        <span class="filter-chip" data-team="T1"><img src="T1/logo.png" alt="">T1</span>
+        <span class="filter-chip" data-team="FS"><img src="FULLSENSE/logo.png" alt="">FS</span>
+        <span class="filter-chip" data-team="GE"><img src="GE/logo.png" alt="">GE</span>
+        <span class="filter-chip" data-team="RRQ"><img src="RRQ/logo.png" alt="">RRQ</span>
+        <span class="filter-chip" data-team="NS"><img src="NS/logo.png" alt="">NS</span>
+        <span class="filter-chip" data-team="DFM"><img src="DFM/logo.png" alt="">DFM</span>
+      </div>
+      <span class="count" id="filterCount"><b>8</b> / 8 matches</span>
+    </div>
+
+    <div class="match-grid" id="matchGrid">
 
       <!-- Match: PRX vs KRX (Lower Round 2 · Latest) -->
-      <a href="match_prx_vs_krx.html" class="match-card">
+      <a href="match_prx_vs_krx.html" class="match-card" data-teams="PRX KRX">
         <span class="badge-corner">Latest</span>
         <div class="event-strip">
           <span>VCT 2026 Pacific · Stage 1</span>
@@ -321,7 +375,7 @@
       </a>
 
       <!-- Match: T1 vs RRQ (Lower Round 2) -->
-      <a href="match_t1_vs_rrq.html" class="match-card">
+      <a href="match_t1_vs_rrq.html" class="match-card" data-teams="T1 RRQ">
         <span class="badge-corner">Lower R2</span>
         <div class="event-strip">
           <span>VCT 2026 Pacific · Stage 1</span>
@@ -362,7 +416,7 @@
       </a>
 
       <!-- Match: KRX vs NS (Lower Round 1) -->
-      <a href="match_krx_vs_ns.html" class="match-card">
+      <a href="match_krx_vs_ns.html" class="match-card" data-teams="KRX NS">
         <span class="badge-corner">Lower R1</span>
         <div class="event-strip">
           <span>VCT 2026 Pacific · Stage 1</span>
@@ -403,7 +457,7 @@
       </a>
 
       <!-- Match: RRQ vs DFM (Lower Round 1) -->
-      <a href="match_rrq_vs_dfm.html" class="match-card">
+      <a href="match_rrq_vs_dfm.html" class="match-card" data-teams="RRQ DFM">
         <span class="badge-corner">Lower R1</span>
         <div class="event-strip">
           <span>VCT 2026 Pacific · Stage 1</span>
@@ -444,7 +498,7 @@
       </a>
 
       <!-- Match: T1 vs FS (Upper Semifinals) -->
-      <a href="match_t1_vs_fs.html" class="match-card">
+      <a href="match_t1_vs_fs.html" class="match-card" data-teams="T1 FS">
         <span class="badge-corner">Semifinals</span>
         <div class="event-strip">
           <span>VCT 2026 Pacific · Stage 1</span>
@@ -484,7 +538,7 @@
       </a>
 
       <!-- Match: PRX vs GE (Upper Semifinals) -->
-      <a href="match_prx_vs_ge.html" class="match-card">
+      <a href="match_prx_vs_ge.html" class="match-card" data-teams="PRX GE">
         <span class="badge-corner">Semifinals</span>
         <div class="event-strip">
           <span>VCT 2026 Pacific · Stage 1</span>
@@ -525,7 +579,7 @@
       </a>
 
       <!-- Match: RRQ vs GE (UR1) -->
-      <a href="match_rrq_vs_ge.html" class="match-card">
+      <a href="match_rrq_vs_ge.html" class="match-card" data-teams="RRQ GE">
         <span class="badge-corner">Round 1</span>
         <div class="event-strip">
           <span>VCT 2026 Pacific · Stage 1</span>
@@ -565,7 +619,7 @@
       </a>
 
       <!-- Match: KRX vs FS (UR1) -->
-      <a href="match_krx_vs_fs.html" class="match-card">
+      <a href="match_krx_vs_fs.html" class="match-card" data-teams="KRX FS">
         <span class="badge-corner">Round 1</span>
         <div class="event-strip">
           <span>VCT 2026 Pacific · Stage 1</span>
@@ -621,6 +675,45 @@
     </div>
   </div>
 </section>
+
+<script>
+(function(){
+  const bar = document.getElementById('filterBar');
+  const grid = document.getElementById('matchGrid');
+  const countEl = document.getElementById('filterCount');
+  if(!bar || !grid) return;
+
+  const chips = bar.querySelectorAll('.filter-chip');
+  const cards = Array.from(grid.querySelectorAll('.match-card'));
+  const total = cards.length;
+
+  const empty = document.createElement('div');
+  empty.className = 'empty-state';
+  empty.textContent = 'No matches found for this team';
+  empty.style.display = 'none';
+  grid.appendChild(empty);
+
+  function apply(team){
+    let shown = 0;
+    cards.forEach(card => {
+      const teams = (card.dataset.teams || '').split(/\s+/);
+      const match = team === 'ALL' || teams.includes(team);
+      card.style.display = match ? '' : 'none';
+      if(match) shown++;
+    });
+    empty.style.display = shown === 0 ? '' : 'none';
+    countEl.innerHTML = '<b>' + shown + '</b> / ' + total + ' matches';
+  }
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      apply(chip.dataset.team);
+    });
+  });
+})();
+</script>
 
 <footer>
   <div class="container">
