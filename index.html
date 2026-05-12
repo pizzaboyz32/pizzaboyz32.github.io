@@ -110,6 +110,13 @@
   button.secondary:hover { background: #3a3a4e; }
   button.danger { background: #ff4466; color: #fff; }
   button.danger:hover { background: #cc2244; }
+  button.discord {
+    background: #5865F2; color: #fff;
+    display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 0 18px rgba(88,101,242,0.35);
+  }
+  button.discord:hover { background: #4752C4; }
+  button.discord svg { width: 20px; height: 16px; fill: #fff; }
 
   .sens-input {
     background: #0a0a14; color: #00ff88;
@@ -351,6 +358,12 @@
         <p class="small">กด <strong>ESC</strong> ระหว่างเล่นเพื่อเปิดเมนูปรับค่าได้ตลอดเวลา</p>
         <div style="flex: 1;"></div>
         <div class="row-buttons" style="justify-content: flex-start; margin-top: 8px;">
+          <button id="discord-btn" class="discord" title="เข้าร่วม Discord">
+            <svg viewBox="0 0 71 55" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.4154c-.0923-.017-.1846.025-.2323.1095-.624 1.11-1.3154 2.5581-1.7995 3.6963-5.4572-.817-10.8864-.817-16.2317 0C26.905 3.0581 26.1886 1.6353 25.5617.5253c-.0476-.0817-.14-.124-.2323-.1099-5.071.8734-9.9237 2.4032-14.4518 4.482-.0392.0169-.0728.0451-.0951.0817C1.578 18.7309-.943 32.1443.293 45.3914c.006.065.042.127.092.166 6.073 4.46 11.956 7.168 17.729 8.962.092.029.19-.005.249-.081 1.366-1.865 2.583-3.832 3.627-5.9.062-.121.003-.265-.123-.313-1.931-.732-3.77-1.626-5.539-2.64-.14-.082-.151-.282-.022-.378.372-.279.745-.569 1.1-.862.064-.054.154-.065.23-.031 11.62 5.305 24.2 5.305 35.682 0 .076-.037.165-.025.232.028.355.293.728.586 1.103.865.129.096.118.296-.022.378-1.769 1.034-3.607 1.907-5.541 2.637-.126.048-.182.195-.12.316 1.066 2.065 2.283 4.031 3.624 5.896.057.079.157.113.249.085 5.801-1.795 11.683-4.502 17.756-8.962.052-.039.088-.099.094-.163 1.48-15.315-2.48-28.619-10.498-40.412-.02-.039-.053-.067-.092-.084ZM23.726 37.325c-3.498 0-6.381-3.212-6.381-7.156s2.827-7.156 6.381-7.156c3.582 0 6.437 3.24 6.381 7.156 0 3.944-2.827 7.156-6.381 7.156Zm23.592 0c-3.498 0-6.381-3.212-6.381-7.156s2.827-7.156 6.381-7.156c3.582 0 6.437 3.24 6.381 7.156 0 3.944-2.799 7.156-6.381 7.156Z"/>
+            </svg>
+            เข้าร่วม Discord
+          </button>
           <button id="tutorial-btn" class="secondary">วิธีใช้ (วิดีโอ)</button>
           <button id="start-btn">เริ่มเลย</button>
         </div>
@@ -372,7 +385,7 @@
         </div>
 
         <div style="margin-top: 12px;">
-          <p style="margin-bottom: 4px;">FOV: <strong class="js-fov-value" style="color:#00ff88;">103</strong>°</p>
+          <p style="margin-bottom: 4px;">FOV (แนวนอน): <strong class="js-fov-value" style="color:#00ff88;">103</strong>°</p>
           <input type="range" class="js-fov-input" min="60" max="120" step="1" value="103" style="width: 100%;">
           <p class="small" style="margin: 6px 0 0 0;">ค่ามาตรฐาน: <strong style="color:#00ff88;">Valorant 103°</strong> &nbsp;|&nbsp; <strong style="color:#ffdd44;">CS2 90°</strong></p>
         </div>
@@ -424,9 +437,9 @@
     <p class="small">พิมพ์ค่าใหม่ในช่องใดก็ได้ ระบบจะคำนวณอีกฝั่งให้อัตโนมัติ (Valorant ค่ามาตรฐาน = 1.000)</p>
 
     <div style="margin-top: 22px;">
-      <p style="margin-bottom: 6px;">FOV (Field of View): <strong class="js-fov-value" style="color:#00ff88;">103</strong>°</p>
+      <p style="margin-bottom: 6px;">FOV แนวนอน (Horizontal): <strong class="js-fov-value" style="color:#00ff88;">103</strong>°</p>
       <input type="range" class="js-fov-input" min="60" max="120" step="1" value="103" style="width: 80%;">
-      <p class="small">ปรับมุมมองกล้อง (60° แคบ – 120° กว้าง) &mdash; <strong style="color:#00ff88;">Valorant ใช้ 103°</strong>, <strong style="color:#ffdd44;">CS2 ใช้ 90°</strong> (ติ๊ก Stretch Mode จะปรับให้อัตโนมัติ)</p>
+      <p class="small">ค่า horizontal FOV (แนวตั้งคำนวณจาก aspect ratio อัตโนมัติ) &mdash; <strong style="color:#00ff88;">Valorant ใช้ 103°</strong>, <strong style="color:#ffdd44;">CS2 ใช้ 90°</strong> (ติ๊ก Stretch Mode จะปรับให้อัตโนมัติ)</p>
     </div>
 
     <div style="margin-top: 16px; padding: 10px 14px; background: rgba(0,0,0,0.25); border-radius: 6px; border: 1px solid #2a2a3e; display: inline-block; text-align: left;">
@@ -1211,6 +1224,10 @@
     window.open('https://youtu.be/iKzMtDK6cVY', '_blank', 'noopener,noreferrer');
   });
 
+  document.getElementById('discord-btn').addEventListener('click', () => {
+    window.open('https://discord.com/invite/Dnb2gBxZrZ', '_blank', 'noopener,noreferrer');
+  });
+
   document.getElementById('tracking-intro-start').addEventListener('click', () => {
     stopIntroMedia();
     startTracking();
@@ -1275,8 +1292,7 @@
       fovDeg = parseInt(input.value, 10);
       els.fovValues.forEach(el => el.textContent = fovDeg);
       els.fovInputs.forEach(inp => { if (inp !== input) inp.value = fovDeg; });
-      camera.fov = fovDeg;
-      camera.updateProjectionMatrix();
+      applyFov();
     });
   });
 
@@ -1418,12 +1434,21 @@
     requestAnimationFrame(animate);
   }
 
+  // fovDeg represents HORIZONTAL FOV (matching how Valorant/CS2 expose it).
+  // Three.js's camera.fov is the VERTICAL FOV; convert via current aspect.
+  function applyFov() {
+    const hRad = fovDeg * Math.PI / 180;
+    const vRad = 2 * Math.atan(Math.tan(hRad / 2) / camera.aspect);
+    camera.fov = vRad * 180 / Math.PI;
+    camera.updateProjectionMatrix();
+  }
+
   function applyAspect() {
     // In stretch mode, camera projects a 4:3 frustum but the renderer fills the
     // full window — three.js maps the narrower frustum onto the wider viewport,
     // producing the same "stretched" effect as CS2's 4:3 → 16:9 setting.
     camera.aspect = stretchMode ? STRETCH_ASPECT : (innerWidth / innerHeight);
-    camera.updateProjectionMatrix();
+    applyFov(); // vertical FOV depends on aspect, so recompute
     renderer.setSize(innerWidth, innerHeight);
   }
 
@@ -1435,10 +1460,9 @@
   const VAL_FOV = 103;
   function setFovDeg(v) {
     fovDeg = v;
-    camera.fov = fovDeg;
-    camera.updateProjectionMatrix();
     els.fovInputs.forEach(inp => { inp.value = fovDeg; });
     els.fovValues.forEach(el => el.textContent = fovDeg);
+    applyFov();
   }
 
   els.stretchToggles.forEach(cb => {
