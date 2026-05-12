@@ -578,8 +578,8 @@
       หรือ ลองค่ามาตรฐานทีละขั้น <strong>400 → 800 → 1600 → 3200</strong><br>
       หาค่าที่คุณ <strong>Tracking ได้</strong> และ <strong>Flicking เข้าเป้า</strong>
     </p>
-    <p>หลังเปลี่ยน DPI แล้ว ค่า Sensitivity เดิมจะไม่ตรงอีก ต้อง<strong>เริ่มจูน Tracking ใหม่ตั้งแต่ต้น</strong> เพื่อหาค่าที่เหมาะสมกับ DPI ใหม่</p>
-    <button id="advice-retry">เริ่มต้นใหม่จาก Tracking</button>
+    <p>หลังเปลี่ยน DPI แล้ว ค่า Sensitivity เดิมจะไม่ตรงอีก ต้อง<strong>เริ่มจูนใหม่ตั้งแต่ต้น</strong> เพื่อหาค่าที่เหมาะสมกับ DPI ใหม่</p>
+    <button id="advice-retry">กลับสู่เมนูหลัก</button>
   </div>
 </div>
 
@@ -1364,7 +1364,11 @@
     yaw = 0; pitch = 0;
     camera.rotation.set(0, 0, 0);
     updateSensDisplay();
-    showTrackingIntro();
+    cleanupTargets();
+    phase = 'menu';
+    hideAllOverlays();
+    hideHud();
+    showOverlay(els.startMenu);
   });
 
   document.getElementById('result-restart').addEventListener('click', () => {
