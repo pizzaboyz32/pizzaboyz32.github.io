@@ -118,6 +118,26 @@
   button.discord:hover { background: #4752C4; }
   button.discord svg { width: 20px; height: 16px; fill: #fff; }
 
+  /* FOV preset selector */
+  .fov-preset-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 8px 0 4px;
+  }
+  .fov-preset-row button {
+    margin: 0; padding: 8px 4px; font-size: 12px; font-weight: 600;
+    background: #2a2a3e; color: #ddd; line-height: 1.35;
+    border-radius: 6px; text-transform: none; letter-spacing: 0;
+  }
+  .fov-preset-row button .preset-sub {
+    display: block; font-size: 10px; font-weight: 500;
+    opacity: 0.7; margin-top: 2px; letter-spacing: 0.5px;
+  }
+  .fov-preset-row button:hover { background: #3a3a4e; transform: none; }
+  .fov-preset-row button.active {
+    background: #00ff88; color: #0a0a14;
+    box-shadow: 0 0 16px rgba(0,255,136,0.35);
+  }
+  .fov-preset-row button.active .preset-sub { opacity: 0.85; }
+
   .sens-input {
     background: #0a0a14; color: #00ff88;
     border: 1px solid #00ff88; padding: 10px 14px;
@@ -385,17 +405,13 @@
         </div>
 
         <div style="margin-top: 12px;">
-          <p style="margin-bottom: 4px;">FOV (แนวนอน): <strong class="js-fov-value" style="color:#00ff88;">103</strong>°</p>
-          <input type="range" class="js-fov-input" min="60" max="120" step="1" value="103" style="width: 100%;">
-          <p class="small" style="margin: 6px 0 0 0;">ค่ามาตรฐาน: <strong style="color:#00ff88;">Valorant 103°</strong> &nbsp;|&nbsp; <strong style="color:#ffdd44;">CS2 90°</strong></p>
-        </div>
-
-        <div style="margin-top: 14px; padding: 10px 12px; background: rgba(0,0,0,0.25); border-radius: 6px; border: 1px solid #2a2a3e;">
-          <label class="checkbox-row" style="display:flex; align-items:center; gap:8px; font-size:14px; margin: 0;">
-            <input type="checkbox" class="js-stretch">
-            <span>โหมด Stretch (จำลอง CS2 4:3 ยืดเต็มจอ)</span>
-          </label>
-          <p class="small" style="margin: 6px 0 0 0; line-height: 1.55;">บีบ FOV แนวนอนเป็น 4:3 แล้วยืดออกเต็มจอ — เป้าจะดูใหญ่ขึ้น และ flick แนวนอนจะรู้สึก "เร็วขึ้น" เพราะ FOV แนวนอนแคบลง</p>
+          <p style="margin-bottom: 2px;">FOV Preset (เลือกตามเกมที่เล่น)</p>
+          <div class="fov-preset-row">
+            <button class="js-fov-preset" data-preset="valorant">Valorant<span class="preset-sub">vFov 71° / hFov 103°</span></button>
+            <button class="js-fov-preset" data-preset="cs2-16-9">CS2 16:9<span class="preset-sub">vFov 74° / hFov 106°</span></button>
+            <button class="js-fov-preset" data-preset="cs2-4-3">CS2 4:3 Stretch<span class="preset-sub">vFov 74° / hFov 90°</span></button>
+          </div>
+          <p class="small" style="margin: 4px 0 0 0; line-height: 1.5;">โหมด <strong>CS2 4:3 Stretch</strong> จะบีบภาพเป็น 4:3 แล้วยืดออกเต็มจอ — เป้าจะดูใหญ่ขึ้น และ flick แนวนอนรู้สึกเร็วกว่า</p>
         </div>
 
         <div class="ch-settings">
@@ -436,18 +452,14 @@
     </div>
     <p class="small">พิมพ์ค่าใหม่ในช่องใดก็ได้ ระบบจะคำนวณอีกฝั่งให้อัตโนมัติ (Valorant ค่ามาตรฐาน = 1.000)</p>
 
-    <div style="margin-top: 22px;">
-      <p style="margin-bottom: 6px;">FOV แนวนอน (Horizontal): <strong class="js-fov-value" style="color:#00ff88;">103</strong>°</p>
-      <input type="range" class="js-fov-input" min="60" max="120" step="1" value="103" style="width: 80%;">
-      <p class="small">ค่า horizontal FOV (แนวตั้งคำนวณจาก aspect ratio อัตโนมัติ) &mdash; <strong style="color:#00ff88;">Valorant ใช้ 103°</strong>, <strong style="color:#ffdd44;">CS2 ใช้ 90°</strong> (ติ๊ก Stretch Mode จะปรับให้อัตโนมัติ)</p>
-    </div>
-
-    <div style="margin-top: 16px; padding: 10px 14px; background: rgba(0,0,0,0.25); border-radius: 6px; border: 1px solid #2a2a3e; display: inline-block; text-align: left;">
-      <label class="checkbox-row" style="display:flex; align-items:center; gap:8px; font-size:14px; margin: 0;">
-        <input type="checkbox" class="js-stretch">
-        <span>โหมด Stretch (จำลอง CS2 4:3 ยืดเต็มจอ)</span>
-      </label>
-      <p class="small" style="margin: 6px 0 0 0; line-height: 1.55;">บีบ FOV แนวนอนเป็น 4:3 แล้วยืดออกเต็มจอ</p>
+    <div style="margin-top: 22px; text-align: left;">
+      <p style="margin-bottom: 4px; text-align: center;">FOV Preset (เลือกตามเกมที่เล่น)</p>
+      <div class="fov-preset-row">
+        <button class="js-fov-preset" data-preset="valorant">Valorant<span class="preset-sub">vFov 71° / hFov 103°</span></button>
+        <button class="js-fov-preset" data-preset="cs2-16-9">CS2 16:9<span class="preset-sub">vFov 74° / hFov 106°</span></button>
+        <button class="js-fov-preset" data-preset="cs2-4-3">CS2 4:3 Stretch<span class="preset-sub">vFov 74° / hFov 90°</span></button>
+      </div>
+      <p class="small" style="text-align: center; margin: 6px 0 0 0;">โหมด <strong>CS2 4:3 Stretch</strong> จะบีบภาพเป็น 4:3 แล้วยืดออกเต็มจอ</p>
     </div>
 
     <div class="ch-settings">
@@ -591,11 +603,18 @@
 (() => {
   // ================= STATE =================
   let sensitivity = 1.000;
-  let fovDeg = 103;
-  // Stretch mode emulates CS2's "4:3 stretched to 16:9" — camera renders with
-  // a 4:3 frustum (narrower horizontal FOV) onto a 16:9 viewport, producing the
-  // familiar squashed/wider-target look. Mouse-to-yaw ratio is unchanged.
-  let stretchMode = false;
+  // FOV presets — each game uses its own vertical FOV (Three.js's camera.fov)
+  // and the matching aspect ratio. Numbers verified against actual game configs:
+  //   Valorant 16:9: vFov 71, hFov 103
+  //   CS2 16:9:      vFov 74, hFov 106
+  //   CS2 4:3 stretched: vFov 74, hFov 90 (rendered at 4:3 then stretched to fill)
+  const FOV_PRESETS = {
+    'valorant':  { label: 'Valorant',        vFov: 71, stretch: false },
+    'cs2-16-9':  { label: 'CS2 16:9',        vFov: 74, stretch: false },
+    'cs2-4-3':   { label: 'CS2 4:3 Stretch', vFov: 74, stretch: true  },
+  };
+  let currentFovPreset = 'valorant';
+  let stretchMode = false; // derived from preset
   const STRETCH_ASPECT = 4 / 3;
   const BASE_MOUSE_SPEED = 0.0022; // rad per pixel at sens=1
   const PI_2 = Math.PI / 2;
@@ -633,7 +652,7 @@
   scene.background = new THREE.Color(0x0a0a14);
   scene.fog = new THREE.Fog(0x0a0a14, 25, 80);
 
-  const camera = new THREE.PerspectiveCamera(103, innerWidth / innerHeight, 0.1, 200);
+  const camera = new THREE.PerspectiveCamera(71, innerWidth / innerHeight, 0.1, 200);
   camera.position.set(0, 1.65, 0);
   camera.rotation.order = 'YXZ';
 
@@ -761,8 +780,6 @@
       phase = 'paused';
       showOverlay(els.pauseMenu);
       els.sensInputs.forEach(inp => inp.value = sensitivity.toFixed(3));
-      els.fovInputs.forEach(inp => inp.value = fovDeg);
-      els.fovValues.forEach(el => el.textContent = fovDeg);
     }
   });
 
@@ -837,8 +854,6 @@
     cs2Display: document.getElementById('cs2-display'),
     sensInputs: document.querySelectorAll('.js-sens-input'),
     cs2Inputs: document.querySelectorAll('.js-cs2-input'),
-    fovInputs: document.querySelectorAll('.js-fov-input'),
-    fovValues: document.querySelectorAll('.js-fov-value'),
     phaseInfo: document.getElementById('phase-info'),
     progressInfo: document.getElementById('progress-info'),
     fqHits: document.getElementById('fq-hits'),
@@ -852,7 +867,6 @@
     chLengthVal: document.querySelectorAll('.js-ch-length-val'),
     chColor: document.querySelectorAll('.js-ch-color'),
     chDot: document.querySelectorAll('.js-ch-dot'),
-    stretchToggles: document.querySelectorAll('.js-stretch'),
     countdownDisplay: document.getElementById('countdown-display'),
     countdownSub: document.getElementById('countdown-sub'),
     rawInputInfo: document.getElementById('rawinput-info'),
@@ -1287,15 +1301,6 @@
     input.addEventListener('input', () => applySensFromCs2(parseFloat(input.value), input));
   });
 
-  els.fovInputs.forEach(input => {
-    input.addEventListener('input', () => {
-      fovDeg = parseInt(input.value, 10);
-      els.fovValues.forEach(el => el.textContent = fovDeg);
-      els.fovInputs.forEach(inp => { if (inp !== input) inp.value = fovDeg; });
-      applyFov();
-    });
-  });
-
   // Crosshair settings — sync all instances of each control via shared CSS variables
   const chState = { gap: 2, thickness: 2, length: 2, color: '#00ff88', dot: true };
   function applyCrosshair() {
@@ -1434,52 +1439,39 @@
     requestAnimationFrame(animate);
   }
 
-  // fovDeg represents HORIZONTAL FOV (matching how Valorant/CS2 expose it).
-  // Three.js's camera.fov is the VERTICAL FOV; convert via current aspect.
-  function applyFov() {
-    const hRad = fovDeg * Math.PI / 180;
-    const vRad = 2 * Math.atan(Math.tan(hRad / 2) / camera.aspect);
-    camera.fov = vRad * 180 / Math.PI;
-    camera.updateProjectionMatrix();
-  }
-
   function applyAspect() {
     // In stretch mode, camera projects a 4:3 frustum but the renderer fills the
     // full window — three.js maps the narrower frustum onto the wider viewport,
     // producing the same "stretched" effect as CS2's 4:3 → 16:9 setting.
     camera.aspect = stretchMode ? STRETCH_ASPECT : (innerWidth / innerHeight);
-    applyFov(); // vertical FOV depends on aspect, so recompute
+    camera.updateProjectionMatrix();
     renderer.setSize(innerWidth, innerHeight);
   }
 
   window.addEventListener('resize', applyAspect);
 
-  // When stretch mode is toggled, also auto-set FOV to match the game preset:
-  // CS2 uses 90 FOV (stretched 4:3), Valorant uses 103 FOV (16:9 native).
-  const CS2_FOV = 90;
-  const VAL_FOV = 103;
-  function setFovDeg(v) {
-    fovDeg = v;
-    els.fovInputs.forEach(inp => { inp.value = fovDeg; });
-    els.fovValues.forEach(el => el.textContent = fovDeg);
-    applyFov();
+  // Apply a FOV preset (vertical FOV + matching aspect ratio).
+  function applyFovPreset(key) {
+    const p = FOV_PRESETS[key];
+    if (!p) return;
+    currentFovPreset = key;
+    stretchMode = p.stretch;
+    camera.fov = p.vFov; // Three.js convention: camera.fov is vertical FOV
+    applyAspect();       // sets aspect + updateProjectionMatrix
+    // Highlight the active preset button across all menus.
+    document.querySelectorAll('.js-fov-preset').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.preset === key);
+    });
   }
 
-  els.stretchToggles.forEach(cb => {
-    cb.addEventListener('change', () => {
-      stretchMode = cb.checked;
-      // Sync sibling checkboxes (start menu ↔ pause menu).
-      els.stretchToggles.forEach(other => { if (other !== cb) other.checked = stretchMode; });
-      applyAspect();
-      // Auto-tune FOV to the appropriate game default.
-      setFovDeg(stretchMode ? CS2_FOV : VAL_FOV);
-    });
+  document.querySelectorAll('.js-fov-preset').forEach(btn => {
+    btn.addEventListener('click', () => applyFovPreset(btn.dataset.preset));
   });
 
   // Init
   updateSensDisplay();
   updateRawInputDisplay();
-  applyAspect();
+  applyFovPreset(currentFovPreset); // applies default (Valorant)
   animate();
 })();
 </script>
