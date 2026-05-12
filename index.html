@@ -310,6 +310,10 @@
     <div class="label">Progress</div>
     <div class="value" id="progress-info">-</div>
   </div>
+  <div class="row hidden" id="track-score-row">
+    <div class="label">Tracking Score</div>
+    <div class="value" id="track-score-info" style="color:#ffdd44;">0.0%</div>
+  </div>
   <div class="row" id="rawinput-row">
     <div class="label">Raw Mouse Input</div>
     <div class="value" id="rawinput-info" style="font-size: 14px;">กำลังตรวจสอบ...</div>
@@ -480,6 +484,11 @@
 <div id="tracking-question" class="overlay hidden">
   <div class="panel">
     <h1>Tracking — ปรับ Sensitivity</h1>
+    <div style="background: rgba(0,0,0,0.35); border: 1px solid #ffdd44; border-radius: 8px; padding: 14px 18px; margin: 6px 0 18px;">
+      <div style="font-size: 12px; letter-spacing: 1.5px; opacity: 0.75; text-transform: uppercase;">Tracking Score</div>
+      <div id="tq-score" style="font-size: 44px; font-weight: 800; color: #ffdd44; letter-spacing: 1px;">0.0%</div>
+      <div id="tq-score-comment" class="small" style="opacity: 0.85; margin-top: 4px;">ติดเป้าได้กี่ % ของเวลา</div>
+    </div>
     <p>Sensitivity ปัจจุบัน</p>
     <div class="sens-pair">
       <label>
@@ -595,6 +604,11 @@
   const COUNTDOWN_FROM = 5;        // counts 5..4..3..2..1
   const COUNTDOWN_GO_HOLD = 0.6;   // seconds to show "เริ่ม!" after 1
   let countdownTime = 0;           // ticks downward from COUNTDOWN_FROM + COUNTDOWN_GO_HOLD
+
+  // Tracking score: accumulate on-target vs total time during 'free' tracking.
+  let trackingOnTargetTime = 0;
+  let trackingTotalTime = 0;
+  let lastTrackingScore = 0; // last completed tracking phase score (0..100)
 
   const FLICK_TARGET_COUNT = 20;
   let flickAttempts = 0;
@@ -833,6 +847,10 @@
     trackingAudio: document.getElementById('tracking-audio'),
     flickingVideo: document.getElementById('flicking-video'),
     flickingAudio: document.getElementById('flicking-audio'),
+    trackScoreRow: document.getElementById('track-score-row'),
+    trackScoreInfo: document.getElementById('track-score-info'),
+    tqScore: document.getElementById('tq-score'),
+    tqScoreComment: document.getElementById('tq-score-comment'),
   };
 
   // ---- intro tutorial media (video loops; audio plays once) ----
@@ -1008,22 +1026,46 @@
     trackingMode = 'countdown';
     countdownTime = COUNTDOWN_FROM + COUNTDOWN_GO_HOLD;
     trackingTimer = TRACKING_DURATION;
+    trackingOnTargetTime = 0;
+    trackingTotalTime = 0;
+    lastTrackingScore = 0;
     spawnTrackingTarget();
     hideAllOverlays();
     showHud();
     // Aim camera at target immediately so the very first frame is locked on.
     if (trackingTarget) aimAt(trackingTarget.position);
     showCountdown(String(COUNTDOWN_FROM), false);
+    updateScoreDisplay(0);
+    els.trackScoreRow.classList.add('hidden'); // hidden during countdown
     updateProgress();
     lockPointer();
   }
 
+  function updateScoreDisplay(score) {
+    const txt = score.toFixed(1) + '%';
+    if (els.trackScoreInfo) els.trackScoreInfo.textContent = txt;
+  }
+
+  function commentForScore(s) {
+    if (s >= 90) return 'ยอดเยี่ยม — ติดเป้าเกือบตลอดเวลา';
+    if (s >= 75) return 'ดีมาก — Sensitivity เข้าใกล้พอดีแล้ว';
+    if (s >= 55) return 'พอใช้ — ลองปรับ Sensitivity เล็กน้อย';
+    if (s >= 35) return 'ยังไม่ค่อยติด — ลองปรับ Sensitivity ปานกลาง';
+    return 'หลุดเป้าบ่อยมาก — ลองปรับ Sensitivity ใหม่';
+  }
+
   function endTracking() {
+    // Compute final score before clearing target.
+    lastTrackingScore = trackingTotalTime > 0
+      ? (trackingOnTargetTime / trackingTotalTime) * 100
+      : 0;
     cleanupTargets();
     phase = 'tracking-q';
     trackingMode = 'free';
     hideCountdown();
     updateSensDisplay();
+    if (els.tqScore) els.tqScore.textContent = lastTrackingScore.toFixed(1) + '%';
+    if (els.tqScoreComment) els.tqScoreComment.textContent = commentForScore(lastTrackingScore);
     showOverlay(els.trackingQ);
     unlockPointer();
   }
@@ -1036,6 +1078,7 @@
     spawnCenterTarget();
     hideAllOverlays();
     showHud();
+    els.trackScoreRow.classList.add('hidden'); // not relevant in flicking
     updateProgress();
     lockPointer();
   }
@@ -1351,6 +1394,15 @@
           updateProgress();
         }
       } else {
+        // Free tracking — accumulate on-target / total time for the score.
+        els.trackScoreRow.classList.remove('hidden');
+        raycaster.setFromCamera(screenCenter, camera);
+        const hits = raycaster.intersectObject(trackingTarget, true);
+        trackingTotalTime += dt;
+        if (hits.length > 0) trackingOnTargetTime += dt;
+        const liveScore = (trackingOnTargetTime / trackingTotalTime) * 100;
+        updateScoreDisplay(liveScore);
+
         trackingTimer -= dt;
         updateProgress();
         if (trackingTimer <= 0) endTracking();
