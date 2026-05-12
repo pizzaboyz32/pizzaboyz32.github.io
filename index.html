@@ -170,6 +170,14 @@
     width: 100%; height: 100%; border: 0;
   }
 
+  /* Intro tutorial video (replaces motion graphics) */
+  .intro-video {
+    display: block; width: 100%; max-width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000; border-radius: 8px; margin: 14px 0;
+    border: 1px solid #2a3a4e; object-fit: cover;
+  }
+
   /* Motion graphics in instruction popups */
   .motion {
     position: relative; height: 80px; margin: 18px 0;
@@ -453,10 +461,8 @@
   <div class="panel">
     <h1>Phase 1 — Tracking</h1>
     <p>ในช่วงนี้จะมีการ <strong>นับถอยหลัง 5 4 3 2 1</strong> ก่อน<br>ระหว่างนับถอยหลัง <strong>กล้องจะเคลื่อนตามเป้าให้อัตโนมัติ</strong></p>
-    <div class="motion tracking-motion">
-      <div class="track-target"></div>
-      <div class="track-cursor"></div>
-    </div>
+    <video id="tracking-video" class="intro-video" src="tracking.mp4" muted loop playsinline preload="auto"></video>
+    <audio id="tracking-audio" src="tracking.mp3" preload="auto"></audio>
     <p style="text-align:left; line-height:1.85;">
       ให้นึกสภาพว่ากำลัง <strong>ควบคุมเป้าหมาย</strong> อยู่ในช่วงเวลานับถอยหลัง
       พยายามออกแรงตามตัวเองคิดว่า <strong>ต้องออกแรงเท่านี้</strong>เพื่อล็อกตาม
@@ -501,12 +507,8 @@
   <div class="panel">
     <h1>Phase 2 — Flicking</h1>
     <p><strong>สะบัดเมาส์</strong>จากเป้ารีเซ็ต (เหลือง) ไปเป้าหลัก (แดง) แบบ <strong>1 จังหวะ</strong></p>
-    <div class="motion flicking-motion">
-      <div class="reset-dot"></div>
-      <div class="main-dot"></div>
-      <div class="arrow"></div>
-      <div class="flick-cursor"></div>
-    </div>
+    <video id="flicking-video" class="intro-video" src="flicking.mp4" muted loop playsinline preload="auto"></video>
+    <audio id="flicking-audio" src="flicking.mp3" preload="auto"></audio>
     <p class="small" style="text-align:left; line-height:1.9;">
       • <strong>ไม่ต้องกระชากเมาส์เร็วๆ</strong> ไม่ต้องกระตุก<br>
       • เลื่อนเมาส์จากจุดรีเซ็ตไปเป้าหลักในจังหวะเดียวอย่างนุ่มนวล<br>
@@ -825,7 +827,36 @@
     countdownDisplay: document.getElementById('countdown-display'),
     countdownSub: document.getElementById('countdown-sub'),
     rawInputInfo: document.getElementById('rawinput-info'),
+    trackingVideo: document.getElementById('tracking-video'),
+    trackingAudio: document.getElementById('tracking-audio'),
+    flickingVideo: document.getElementById('flicking-video'),
+    flickingAudio: document.getElementById('flicking-audio'),
   };
+
+  // ---- intro tutorial media (video loops; audio plays once) ----
+  function stopIntroMedia() {
+    [els.trackingVideo, els.trackingAudio, els.flickingVideo, els.flickingAudio].forEach(m => {
+      if (!m) return;
+      try { m.pause(); m.currentTime = 0; } catch (e) {}
+    });
+  }
+  function playIntroMedia(video, audio) {
+    stopIntroMedia();
+    if (video) {
+      try {
+        video.currentTime = 0;
+        const p = video.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      } catch (e) {}
+    }
+    if (audio) {
+      try {
+        audio.currentTime = 0;
+        const p = audio.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      } catch (e) {}
+    }
+  }
 
   function updateRawInputDisplay() {
     if (!els.rawInputInfo) return;
@@ -1028,6 +1059,7 @@
     hideHud();
     showOverlay(els.trackingIntro);
     unlockPointer();
+    playIntroMedia(els.trackingVideo, els.trackingAudio);
   }
 
   function showFlickingIntro() {
@@ -1035,6 +1067,7 @@
     hideHud();
     showOverlay(els.flickingIntro);
     unlockPointer();
+    playIntroMedia(els.flickingVideo, els.flickingAudio);
   }
 
   // ================= SHOOTING =================
@@ -1113,7 +1146,19 @@
   }
 
   // ================= BUTTON HANDLERS =================
+  function enterFullscreen() {
+    const el = document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+    if (req && !document.fullscreenElement) {
+      try {
+        const p = req.call(el);
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      } catch (e) {}
+    }
+  }
+
   document.getElementById('start-btn').addEventListener('click', () => {
+    enterFullscreen();
     showTrackingIntro();
   });
 
@@ -1122,10 +1167,12 @@
   });
 
   document.getElementById('tracking-intro-start').addEventListener('click', () => {
+    stopIntroMedia();
     startTracking();
   });
 
   document.getElementById('flicking-intro-start').addEventListener('click', () => {
+    stopIntroMedia();
     startFlicking();
   });
 
