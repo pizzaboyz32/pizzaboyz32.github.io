@@ -256,6 +256,72 @@
     border:1px solid var(--line);border-radius:99px;background:rgba(0,0,0,.3)
   }
 
+  /* ===== FEATURED PREVIEW BANNER ===== */
+  .feature-banner{
+    display:grid;grid-template-columns:1.3fr 1fr;gap:0;margin-bottom:32px;
+    border:1px solid var(--line);border-radius:16px;overflow:hidden;
+    background:linear-gradient(135deg,#161c26 0%,#10141c 100%);
+    position:relative;transition:all .3s ease;cursor:pointer;
+  }
+  .feature-banner::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(600px 300px at 80% 50%, rgba(255,70,85,.18), transparent 60%),
+      radial-gradient(400px 200px at 20% 80%, rgba(76,201,240,.10), transparent 60%);
+    pointer-events:none;
+  }
+  .feature-banner:hover{transform:translateY(-3px);border-color:rgba(255,70,85,.45);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 0 1px rgba(255,70,85,.2)}
+  .feature-banner .info{padding:32px 36px;position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center}
+  .feature-banner .kicker-tag{
+    display:inline-flex;align-items:center;gap:8px;padding:6px 12px;
+    background:rgba(255,181,71,.12);border:1px solid rgba(255,181,71,.35);
+    border-radius:99px;font-family:'Rajdhani';font-weight:700;font-size:11px;
+    letter-spacing:3px;color:#ffb547;text-transform:uppercase;
+    align-self:flex-start;margin-bottom:14px;
+  }
+  .feature-banner .kicker-tag .dot{width:6px;height:6px;border-radius:50%;background:#ffb547;box-shadow:0 0 8px #ffb547}
+  .feature-banner h3{
+    font-family:'Rajdhani';font-weight:800;font-size:34px;color:#fff;
+    letter-spacing:1px;line-height:1.05;margin-bottom:10px;text-transform:uppercase;
+  }
+  .feature-banner h3 span{color:var(--accent)}
+  .feature-banner p{color:#cfd5e2;font-size:14px;margin-bottom:18px;max-width:520px}
+  .feature-banner .cta-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .feature-banner .read-btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:11px 20px;background:var(--accent);color:#fff;
+    font-family:'Rajdhani';font-weight:700;font-size:13px;letter-spacing:2.5px;
+    text-transform:uppercase;border-radius:99px;transition:all .2s;
+  }
+  .feature-banner:hover .read-btn{background:var(--accent-2);transform:translateX(4px)}
+  .feature-banner .meta-tags{display:flex;gap:8px;flex-wrap:wrap}
+  .feature-banner .meta-tags span{
+    font-family:'Rajdhani';font-size:11px;letter-spacing:2px;color:var(--muted);
+    text-transform:uppercase;padding:5px 10px;
+    border:1px solid var(--line);border-radius:99px;background:rgba(0,0,0,.3)
+  }
+  .feature-banner .visual{
+    position:relative;z-index:1;display:flex;align-items:center;justify-content:center;
+    padding:30px;background:radial-gradient(circle at center, rgba(0,0,0,.3), transparent 70%);
+  }
+  .feature-banner .team-stack{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;width:100%;max-width:300px}
+  .feature-banner .ts-cell{
+    background:rgba(10,14,21,.6);border:1px solid var(--line);border-radius:10px;
+    padding:14px 12px;text-align:center;backdrop-filter:blur(4px);
+    transition:transform .2s ease;
+  }
+  .feature-banner:hover .ts-cell{transform:translateY(-2px)}
+  .feature-banner .ts-cell img{width:46px;height:46px;object-fit:contain;margin-bottom:6px}
+  .feature-banner .ts-cell .tnm{font-family:'Rajdhani';font-weight:700;font-size:13px;color:#fff;letter-spacing:1.5px;text-transform:uppercase}
+  .feature-banner .ts-cell .trec{font-family:'Rajdhani';font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+  .feature-banner .ts-cell.upper .trec{color:#3ddc97}
+  .feature-banner .ts-cell.lower .trec{color:#ffb547}
+  @media (max-width: 760px){
+    .feature-banner{grid-template-columns:1fr}
+    .feature-banner h3{font-size:24px}
+    .feature-banner .visual{padding:0 30px 30px}
+  }
+
   footer{padding:40px 0 30px;color:var(--muted);font-size:12px;text-align:center;border-top:1px solid var(--line);background:#08090d}
 
   @media (max-width: 920px){
@@ -313,6 +379,47 @@
       </div>
       <p class="meta">เลือกแมตช์ที่ต้องการอ่านบทวิเคราะห์เต็ม — แต่ละหน้ามี Stats รายผู้เล่น, Round Flow, Entry Duels, Kill Matchup Matrix และบทวิเคราะห์เชิงลึก</p>
     </div>
+
+    <!-- FEATURED PREVIEW BANNER -->
+    <a href="top4_preview.html" class="feature-banner">
+      <div class="info">
+        <div class="kicker-tag"><span class="dot"></span> Featured · Final Week Preview</div>
+        <h3>Top 4 <span>Showdown</span> · Stage 1 Finals</h3>
+        <p>วิเคราะห์ครบทุกมิติของ 4 ทีมที่เหลือ — Trajectory, Map Pool Matrix, Top Players, Head-to-Head และ Title Probability ก่อนเข้าสัปดาห์สุดท้าย</p>
+        <div class="cta-row">
+          <span class="read-btn">Read Preview →</span>
+          <div class="meta-tags">
+            <span>Upper Final</span>
+            <span>Lower Final</span>
+            <span>Title Odds</span>
+          </div>
+        </div>
+      </div>
+      <div class="visual">
+        <div class="team-stack">
+          <div class="ts-cell upper">
+            <img src="FULLSENSE/logo.png" alt="FS" />
+            <div class="tnm">FS</div>
+            <div class="trec">Upper · 2-0</div>
+          </div>
+          <div class="ts-cell upper">
+            <img src="GE/logo.png" alt="GE" />
+            <div class="tnm">GE</div>
+            <div class="trec">Upper · 2-0</div>
+          </div>
+          <div class="ts-cell lower">
+            <img src="T1/logo.png" alt="T1" />
+            <div class="tnm">T1</div>
+            <div class="trec">Lower · 1-1</div>
+          </div>
+          <div class="ts-cell lower">
+            <img src="Paper rex/logo.png" alt="PRX" />
+            <div class="tnm">PRX</div>
+            <div class="trec">Lower · 1-1</div>
+          </div>
+        </div>
+      </div>
+    </a>
 
     <!-- FILTER BAR -->
     <div class="filter-bar" id="filterBar">
