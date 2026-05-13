@@ -416,6 +416,47 @@
     .bvs{font-size:26px}
     .trajectory{grid-template-columns:1fr}
   }
+
+  /* ===== MOBILE — Topnav & Matrix fixes ===== */
+  @media (max-width: 760px){
+    /* Topnav: ซ่อนเมนูส่วนกลาง เหลือแค่ brand + back · ลด padding */
+    .topnav{padding:10px 0}
+    .topnav .container{gap:10px;flex-wrap:nowrap}
+    .topnav nav{display:none}
+    .topnav .brand{font-size:17px;letter-spacing:1.5px}
+    .topnav .back{padding:6px 11px;font-size:10px;letter-spacing:1.5px;white-space:nowrap}
+    .hero{padding:50px 0 40px}
+
+    /* Map Matrix: บังคับให้ scroll แนวนอน · sticky คอลัมน์ทีมไว้ซ้าย */
+    .matrix-wrap{
+      -webkit-overflow-scrolling:touch;
+      position:relative;
+      box-shadow:inset -20px 0 20px -20px rgba(0,0,0,.7);
+    }
+    .matrix-wrap::after{
+      content:"← swipe →";position:absolute;top:8px;right:10px;
+      font-family:'Rajdhani';font-size:9px;letter-spacing:2px;
+      color:var(--muted);text-transform:uppercase;
+      background:rgba(0,0,0,.6);padding:3px 8px;border-radius:99px;
+      pointer-events:none;z-index:3;
+    }
+    table.matrix{min-width:680px}
+    table.matrix th, table.matrix td{font-size:11px;letter-spacing:.5px}
+    table.matrix td{padding:10px 4px;line-height:1.4}
+    table.matrix th:first-child, table.matrix td:first-child{
+      position:sticky;left:0;z-index:2;
+      background:#0a0e15;width:100px;min-width:100px;
+      padding-left:12px;
+      box-shadow:6px 0 12px -6px rgba(0,0,0,.6);
+    }
+    table.matrix tbody td:first-child{background:linear-gradient(90deg,#10141c 0%,#10141c 100%)}
+    table.matrix td.team-cell{font-size:13px;letter-spacing:.5px}
+    table.matrix td.team-cell img{width:20px;height:20px;margin-right:5px;display:block;margin-bottom:3px}
+    .map-head{height:74px;padding-bottom:6px}
+    .map-head span{font-size:10px;letter-spacing:1.2px}
+    .matrix-legend{font-size:10px;gap:8px}
+    .matrix-legend span{font-size:10px;letter-spacing:1px}
+  }
 </style>
 </head>
 <body>
