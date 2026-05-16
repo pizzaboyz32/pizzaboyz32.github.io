@@ -16,6 +16,13 @@ Avoid over-engineering. Prefer clarity over cleverness.
 
 Skip the discovery work. The schema below is the authoritative reference — do **not** Read existing `data/*.js` or `assets/match-render.js` files to figure out structure.
 
+### 0. Input format (analysis folder)
+The user provides a single folder (e.g. `FSvsGE/`) that holds both the analysis text and the highlight videos:
+- **`*.txt`** — the analysis. Line 1 is a free-form title. Look for `Matchid: NNNNNN` near the top (usually line 3) — this is the API match id. Inline placeholders shaped `[แทรก วิดีโอ HilightN.mp4 คำอธิบายประกอบวิดีโอ "..."]` mark where each clip goes and the caption to use.
+- **`hilightN.mp4`** files — the highlight clips. Reference them in JS with a lowercase relative path like `"FSvsGE/hilight1.mp4"` (Windows is case-insensitive but lowercase keeps things consistent).
+
+**Videos embed inline within the analysis section** (not in a separate reel) — they're meant to sit right next to the prose that describes the moment, so readers can compare narrative to footage. Each placeholder becomes one entry in the relevant analysis card's `paragraphs` array as `{ video, title, caption }` (see schema §5). The renderer auto-pauses other videos when one starts playing, so don't worry about audio overlap.
+
 ### 1. Fetch API (handle quirks)
 ```
 curl.exe -s --max-time 60 "https://vlrggapi.vercel.app/v2/match/details?match_id=XXXXXX" -o api_XXXXXX.json
@@ -24,8 +31,8 @@ curl.exe -s --max-time 60 "https://vlrggapi.vercel.app/v2/match/details?match_id
 - `jq` is NOT installed — use Python (`python3 -c "import json; ..."`) for inspection.
 
 ### 2. API JSON shape (top-level)
-- `data.segments[0]` — the match. Key fields: `event`, `date`, `patch` (contains veto string), `teams[]`, `maps[]`.
-- `data.segments[0].patch` — parse this for veto order: `"KRX ban Lotus; PRX ban Pearl; KRX pick Ascent; PRX pick Breeze; KRX ban Fracture; PRX ban Haven; Split remains"`.
+- `data.segments[0]` — the match. Key fields: `event`, `date`, `map_vetos`, `teams[]`, `maps[]`.
+- `data.segments[0].map_vetos` — semicolon-separated veto string, e.g. `"FS ban Ascent; GE ban Fracture; FS pick Split; GE pick Breeze; FS ban Haven; GE ban Pearl; Lotus remains"`. Parse for the full veto list — include all bans, picks, and the decider in the data file, even if the decider didn't get played.
 - `maps[i]`: `map_name`, `score:{team1,team2}`, `score_ct:{team1,team2}`, `score_t:{team1,team2}`, `players:{team1[],team2[]}`, `rounds[]`, `performance.kill_matrix`.
 - **Rounds list is padded to 24** even if game ended earlier. Truncate to `score.team1 + score.team2`.
 - **Side assignment**: each team has CT+T scores that sum to their total. First half = one team CT + other team T = 12 rounds. Match the split that adds to 12 to determine who defended first half.
@@ -56,7 +63,10 @@ Whole-match matrix duplicated in every map (per CLAUDE.md). Cells like `"123+9"`
   }],
   radar: { sectionDesc, t1:{rating,acs,kast,adr,hs,kpp}, t2:{...}, insights:[{team,label,value,delta}], note },
   killMatrix: { desc, cols:[{name,photo}], rows:[{name,photo,values:[{k,opK,diff}]}], statLinks:[{value,label}] },
-  analysis: [ {title, sub?, paragraphs:[html], pull?, stats?:[{value,label}]}, ... ]
+  analysis: [ {title, sub?, paragraphs:[ html | {video, title, caption?} ], pull?, stats?:[{value,label}]}, ... ]
+  // paragraphs entries can be either a string of HTML or a video object — videos render inline
+  // between paragraphs as a bordered figure with caption. Place each video right after the
+  // paragraph that introduces the moment so prose and footage stay aligned.
 }
 ```
 

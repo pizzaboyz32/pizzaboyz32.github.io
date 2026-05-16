@@ -326,12 +326,23 @@ function renderKillMatrix(d) {
 function renderAnalysis(d) {
   if (!d.analysis || !d.analysis.length) return '';
   const cards = d.analysis.map(a => {
-    const paragraphs = (a.paragraphs || []).map(p => `<p>${p}</p>`).join('');
+    const blocks = (a.paragraphs || []).map(p => {
+      if (typeof p === 'string') return `<p>${p}</p>`;
+      if (p && p.video) {
+        const cap = p.caption ? `<div class="hl-cap">${esc(p.caption)}</div>` : '';
+        const title = p.title ? `<div class="hl-title">${esc(p.title)}</div>` : '';
+        return `<figure class="inline-video">
+          <video controls preload="metadata" playsinline src="${esc(p.video)}"></video>
+          <figcaption>${title}${cap}</figcaption>
+        </figure>`;
+      }
+      return '';
+    }).join('');
     const pull = a.pull ? `<div class="pull">${a.pull}</div>` : '';
     const stats = (a.stats || []).map(s => `<div class="item"><div class="k">${esc(s.value)}</div><div class="l">${esc(s.label)}</div></div>`).join('');
     const statLinks = stats ? `<div class="stat-link">${stats}</div>` : '';
     const sub = a.sub ? `<div class="sub">${esc(a.sub)}</div>` : '';
-    return `<div class="analysis-card"><h3>${esc(a.title)}</h3>${sub}${paragraphs}${pull}${statLinks}</div>`;
+    return `<div class="analysis-card"><h3>${esc(a.title)}</h3>${sub}${blocks}${pull}${statLinks}</div>`;
   }).join('');
   return `
 <section>
@@ -364,12 +375,23 @@ function renderMatch(d) {
     renderAnalysis(d) +
     renderFooter(d);
   renderRoundFlows(d);
+  setupVideoSingleton();
   // Defer chart until Chart.js is loaded
   if (window.Chart) {
     drawRadarChart(d);
   } else {
     const wait = setInterval(() => { if (window.Chart) { clearInterval(wait); drawRadarChart(d); } }, 50);
   }
+}
+
+// Ensure only one video plays at a time across the page
+function setupVideoSingleton() {
+  const videos = Array.from(document.querySelectorAll('video'));
+  videos.forEach(v => {
+    v.addEventListener('play', () => {
+      videos.forEach(o => { if (o !== v && !o.paused) o.pause(); });
+    });
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {

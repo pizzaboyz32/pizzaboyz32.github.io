@@ -195,6 +195,16 @@ section{padding:56px 0;border-bottom:1px solid var(--line)}
 .km-table td.k-neg{background:linear-gradient(135deg,rgba(var(--t2-rgb),.25),rgba(var(--t2-rgb),.5))}
 .km-table td.k-very-neg{background:linear-gradient(135deg,rgba(var(--t2-rgb),.5),rgba(var(--t2-rgb),.85))}
 
+/* INLINE VIDEO (inside analysis cards) */
+.analysis-card .inline-video{margin:16px auto;max-width:75%;background:#0d131c;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;overflow:hidden}
+.analysis-card .inline-video video{width:100%;display:block;background:#000;aspect-ratio:16/9;object-fit:contain;max-height:390px}
+.analysis-card .inline-video figcaption{padding:10px 14px 12px;background:rgba(var(--accent-rgb),.05)}
+.analysis-card .inline-video .hl-title{font-family:'Rajdhani';font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#fff;line-height:1.35}
+.analysis-card .inline-video .hl-cap{color:var(--muted);font-size:12px;margin-top:4px;line-height:1.55}
+@media (max-width: 900px){
+  .analysis-card .inline-video{max-width:100%}
+}
+
 footer{padding:30px 0;color:var(--muted);font-size:12px;text-align:center}
 
 @media (max-width: 900px){
