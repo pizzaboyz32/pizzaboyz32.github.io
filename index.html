@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>FPS Sensitivity Helper</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; overflow: hidden; font-family: 'Segoe UI', 'Sarabun', Tahoma, sans-serif; background: #0a0a14; color: #fff; user-select: none; }
+  canvas { display: block; }
+
+  :root {
+    --ch-color: #00ff88;
+    --ch-gap: 2px;
+    --ch-thickness: 2px;
+    --ch-length: 2px;
+    --ch-dot-display: block;
+  }
+  .crosshair-render {
+    position: relative;
+    width: 80px; height: 80px;
+  }
+  .crosshair-render .line {
+    position: absolute; left: 50%; top: 50%;
+    background: var(--ch-color);
+    box-shadow: 0 0 4px var(--ch-color);
+  }
+  .crosshair-render .line.t {
+    width: var(--ch-thickness); height: var(--ch-length);
+    transform: translate(-50%, calc(-100% - var(--ch-gap)));
+  }
+  .crosshair-render .line.b {
+    width: var(--ch-thickness); height: var(--ch-length);
+    transform: translate(-50%, var(--ch-gap));
+  }
+  .crosshair-render .line.l {
+    height: var(--ch-thickness); width: var(--ch-length);
+    transform: translate(calc(-100% - var(--ch-gap)), -50%);
+  }
+  .crosshair-render .line.r {
+    height: var(--ch-thickness); width: var(--ch-length);
+    transform: translate(var(--ch-gap), -50%);
+  }
+  .crosshair-render .dot {
+    position: absolute; left: 50%; top: 50%;
+    width: var(--ch-thickness); height: var(--ch-thickness);
+    background: var(--ch-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    display: var(--ch-dot-display);
+  }
+  #crosshair {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    pointer-events: none; z-index: 10;
+  }
+  .ch-preview-box {
+    display: flex; align-items: center; justify-content: center;
+    height: 110px;
+    background: linear-gradient(135deg, #14243a, #0a1828);
+    border-radius: 6px; margin: 10px 0 14px;
+    border: 1px solid #2a3a4e;
+    background-image:
+      linear-gradient(135deg, #14243a, #0a1828),
+      repeating-linear-gradient(45deg, transparent 0 8px, rgba(255,255,255,0.02) 8px 9px);
+  }
+
+  #hud {
+    position: fixed; top: 16px; left: 16px; z-index: 5; font-size: 14px;
+    pointer-events: none;
+  }
+  #hud .row {
+    background: rgba(10,10,20,0.6); padding: 8px 12px; margin-bottom: 6px;
+    border-radius: 4px; border-left: 3px solid #00ff88; backdrop-filter: blur(4px);
+  }
+  #hud .label { opacity: 0.7; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+  #hud .value { font-size: 18px; font-weight: 600; color: #00ff88; }
+
+  #hint {
+    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    background: rgba(10,10,20,0.6); padding: 8px 16px; border-radius: 4px;
+    font-size: 13px; opacity: 0.8; z-index: 5; pointer-events: none;
+    border: 1px solid #2a2a3e;
+  }
+
+  .overlay {
+    position: fixed; inset: 0; background: rgba(5,5,15,0.88);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; backdrop-filter: blur(6px);
+  }
+  .panel {
+    background: linear-gradient(145deg, #1a1a2e, #14142a);
+    padding: 32px 40px; border-radius: 12px;
+    border: 1px solid #00ff88; max-width: 540px; text-align: center;
+    box-shadow: 0 0 40px rgba(0,255,136,0.15);
+  }
+  .panel h1 { margin-top: 0; color: #00ff88; font-size: 26px; letter-spacing: 1px; }
+  .panel h2 { color: #00ff88; font-size: 20px; margin-top: 0; }
+  .panel p { line-height: 1.7; margin: 14px 0; }
+  .panel .small { font-size: 13px; opacity: 0.7; }
+  .panel .big { font-size: 56px; color: #00ff88; margin: 24px 0; font-weight: 700; letter-spacing: 2px; }
+
+  button {
+    background: #00ff88; color: #0a0a14; border: none;
+    padding: 12px 22px; font-size: 15px; cursor: pointer;
+    border-radius: 6px; margin: 6px; font-weight: 700;
+    font-family: inherit; transition: transform 0.1s, background 0.15s;
+  }
+  button:hover { background: #00cc6a; transform: translateY(-1px); }
+  button:active { transform: translateY(0); }
+  button.secondary { background: #2a2a3e; color: #fff; }
+  button.secondary:hover { background: #3a3a4e; }
+  button.danger { background: #ff4466; color: #fff; }
+  button.danger:hover { background: #cc2244; }
+  button.discord {
+    background: #5865F2; color: #fff;
+    display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 0 18px rgba(88,101,242,0.35);
+  }
+  button.discord:hover { background: #4752C4; }
+  button.discord svg { width: 20px; height: 16px; fill: #fff; }
+
+  /* FOV preset selector */
+  .fov-preset-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 8px 0 4px;
+  }
+  .fov-preset-row button {
+    margin: 0; padding: 8px 4px; font-size: 12px; font-weight: 600;
+    background: #2a2a3e; color: #ddd; line-height: 1.35;
+    border-radius: 6px; text-transform: none; letter-spacing: 0;
+  }
+  .fov-preset-row button .preset-sub {
+    display: block; font-size: 10px; font-weight: 500;
+    opacity: 0.7; margin-top: 2px; letter-spacing: 0.5px;
+  }
+  .fov-preset-row button:hover { background: #3a3a4e; transform: none; }
+  .fov-preset-row button.active {
+    background: #00ff88; color: #0a0a14;
+    box-shadow: 0 0 16px rgba(0,255,136,0.35);
+  }
+  .fov-preset-row button.active .preset-sub { opacity: 0.85; }
+
+  .sens-input {
+    background: #0a0a14; color: #00ff88;
+    border: 1px solid #00ff88; padding: 10px 14px;
+    font-size: 22px; border-radius: 6px; width: 140px;
+    text-align: center; font-family: monospace; font-weight: 700;
+  }
+  .sens-input.cs2 { color: #ffdd44; border-color: #ffdd44; }
+
+  .sens-pair {
+    display: flex; gap: 10px; justify-content: center;
+    align-items: flex-end; flex-wrap: wrap; margin: 6px 0;
+  }
+  .sens-pair label {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .sens-pair .game-label {
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .sens-pair .game-label.val { color: #00ff88; }
+  .sens-pair .game-label.cs2 { color: #ffdd44; }
+  .sens-pair .sens-input { width: 130px; font-size: 20px; padding: 8px 10px; }
+
+  .hidden { display: none !important; }
+
+  .row-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 16px; }
+
+  .start-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    text-align: left; margin: 18px 0;
+  }
+  .start-grid .col { display: flex; flex-direction: column; }
+  .start-grid .col-info p { margin: 8px 0; line-height: 1.65; }
+  .start-grid .col-settings {
+    background: rgba(0,0,0,0.25); padding: 16px; border-radius: 8px;
+    border: 1px solid #2a2a3e;
+  }
+  .start-grid .col-settings h3 {
+    margin: 0 0 10px 0; color: #00ff88; font-size: 14px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .start-grid .col-settings .ch-settings { padding: 12px; margin-top: 14px; }
+  .panel.panel-wide { max-width: 920px; }
+  @media (max-width: 760px) {
+    .start-grid { grid-template-columns: 1fr; }
+    .panel.panel-wide { max-width: 540px; }
+  }
+
+  /* Tutorial video modal */
+  .video-wrap {
+    position: relative; width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000; border-radius: 6px; overflow: hidden;
+  }
+  .video-wrap iframe {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; border: 0;
+  }
+
+  /* Intro tutorial video (replaces motion graphics) */
+  .intro-video {
+    display: block; width: 100%; max-width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000; border-radius: 8px; margin: 14px 0;
+    border: 1px solid #2a3a4e; object-fit: cover;
+  }
+
+  /* Motion graphics in instruction popups */
+  .motion {
+    position: relative; height: 80px; margin: 18px 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.4), rgba(0,255,136,0.05), rgba(0,0,0,0.4));
+    border-radius: 8px; overflow: hidden;
+    border: 1px solid #2a3a4e;
+  }
+  .tracking-motion .track-target {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 14px; height: 14px; background: #ff3b5c; border-radius: 50%;
+    box-shadow: 0 0 10px #ff3b5c;
+    animation: track-target-anim 3.5s ease-in-out infinite alternate;
+  }
+  .tracking-motion .track-cursor {
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    width: 22px; height: 22px; border: 2px solid #00ff88; border-radius: 50%;
+    box-shadow: 0 0 6px rgba(0,255,136,0.6);
+    animation: track-cursor-anim 3.5s ease-in-out infinite alternate;
+  }
+  @keyframes track-target-anim {
+    0%   { left: 8%; }
+    100% { left: calc(92% - 14px); }
+  }
+  @keyframes track-cursor-anim {
+    0%   { left: calc(8% + 7px); }
+    100% { left: calc(92% - 7px); }
+  }
+
+  .flicking-motion .reset-dot {
+    position: absolute; top: 50%; left: 30%;
+    width: 12px; height: 12px; background: #ffdd44; border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px #ffdd44;
+  }
+  .flicking-motion .main-dot {
+    position: absolute; top: 50%; left: 75%;
+    width: 12px; height: 12px; background: #ff3b5c; border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px #ff3b5c;
+    animation: flick-main-fade 3s steps(1) infinite;
+  }
+  .flicking-motion .flick-cursor {
+    position: absolute; top: 50%;
+    width: 22px; height: 22px; border: 2px solid #00ff88; border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 6px rgba(0,255,136,0.6);
+    animation: flick-cursor-anim 3s ease-in-out infinite;
+  }
+  .flicking-motion .arrow {
+    position: absolute; top: 50%; left: 30%; width: 45%; height: 2px;
+    background: linear-gradient(90deg, rgba(0,255,136,0.0), rgba(0,255,136,0.6));
+    transform: translateY(-50%);
+    opacity: 0;
+    animation: flick-arrow-anim 3s ease-in-out infinite;
+  }
+  @keyframes flick-cursor-anim {
+    0%, 25%   { left: 30%; }
+    40%, 70%  { left: 75%; }
+    85%, 100% { left: 30%; }
+  }
+  @keyframes flick-main-fade {
+    0%, 38%    { opacity: 1; }
+    39%, 100%  { opacity: 0.2; }
+  }
+  @keyframes flick-arrow-anim {
+    0%, 25%   { opacity: 0; }
+    30%, 38%  { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+
+  /* Crosshair settings panel */
+  .ch-settings { text-align: left; margin-top: 18px; padding: 14px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px solid #2a2a3e; }
+  .ch-settings h3 { margin: 0 0 10px 0; color: #00ff88; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+  .ch-settings label { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; font-size: 13px; gap: 10px; }
+  .ch-settings label span.lbl { flex: 0 0 110px; }
+  .ch-settings label input[type=range] { flex: 1; }
+  .ch-settings label .num { flex: 0 0 32px; text-align: right; color: #00ff88; font-family: monospace; }
+  .ch-settings .checkbox-row { justify-content: flex-start; gap: 8px; }
+
+  .cs2-line { font-size: 13px; opacity: 0.85; margin: 6px 0; }
+  .cs2-line strong { color: #ffdd44; }
+
+  /* Countdown overlay (during tracking auto-follow phase) */
+  #countdown-display {
+    position: fixed; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 180px; font-weight: 800;
+    color: rgba(255,255,255,0.38);
+    text-shadow: 0 0 28px rgba(255,255,255,0.25), 0 0 60px rgba(0,255,136,0.15);
+    z-index: 8; pointer-events: none;
+    letter-spacing: 6px;
+    font-family: 'Segoe UI', 'Sarabun', Tahoma, sans-serif;
+    animation: cd-pulse 1s ease-out;
+  }
+  #countdown-display.go { font-size: 120px; color: rgba(0,255,136,0.55); letter-spacing: 12px; }
+  @keyframes cd-pulse {
+    0%   { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
+    30%  { transform: translate(-50%, -50%) scale(1.0); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.0); opacity: 1; }
+  }
+  #countdown-sub {
+    position: fixed; left: 50%; top: calc(50% + 130px);
+    transform: translateX(-50%);
+    font-size: 16px; color: rgba(255,255,255,0.7);
+    z-index: 8; pointer-events: none;
+    text-align: center; max-width: 80vw; line-height: 1.6;
+    background: rgba(10,10,20,0.55);
+    padding: 8px 18px; border-radius: 6px;
+    border: 1px solid rgba(0,255,136,0.25);
+    backdrop-filter: blur(4px);
+  }
+</style>
+</head>
+<body>
+
+<div id="hud" class="hidden">
+  <div class="row">
+    <div class="label">Phase</div>
+    <div class="value" id="phase-info">-</div>
+  </div>
+  <div class="row">
+    <div class="label">Sensitivity (Valorant)</div>
+    <div class="value" id="sens-display">1.000</div>
+  </div>
+  <div class="row">
+    <div class="label">CS2 16:9 (× 4.7407408)</div>
+    <div class="value" id="cs2-display" style="color:#ffdd44;">4.741</div>
+  </div>
+  <div class="row">
+    <div class="label">Progress</div>
+    <div class="value" id="progress-info">-</div>
+  </div>
+  <div class="row hidden" id="track-score-row">
+    <div class="label">Tracking Score</div>
+    <div class="value" id="track-score-info" style="color:#ffdd44;">0.0%</div>
+  </div>
+  <div class="row" id="rawinput-row">
+    <div class="label">Raw Mouse Input</div>
+    <div class="value" id="rawinput-info" style="font-size: 14px;">กำลังตรวจสอบ...</div>
+  </div>
+</div>
+
+<div id="crosshair" class="crosshair-render hidden">
+  <div class="line t"></div>
+  <div class="line b"></div>
+  <div class="line l"></div>
+  <div class="line r"></div>
+  <div class="dot"></div>
+</div>
+
+<div id="hint" class="hidden">คลิกซ้าย = ยิง &nbsp;|&nbsp; ESC = เมนูปรับ Sensitivity</div>
+
+<div id="countdown-display" class="hidden">5</div>
+<div id="countdown-sub" class="hidden">กล้องกำลังล็อกเป้าให้ — จดจังหวะและน้ำหนักการเคลื่อนของเป้าไว้</div>
+
+<!-- เมนูเริ่มต้น -->
+<div id="start-menu" class="overlay">
+  <div class="panel panel-wide">
+    <h1>FPS Sensitivity Helper</h1>
+
+    <div class="start-grid">
+      <div class="col col-info">
+        <p>เครื่องมือช่วยหา <strong>Sensitivity</strong> ที่เหมาะสมกับการเล็งของคุณ</p>
+        <p style="line-height: 1.9;">
+          <strong style="color:#00ff88;">Phase 1 — Tracking</strong><br>
+          เล็งตามเป้าที่เคลื่อนที่ไปมา 20 วินาที<br>
+          <br>
+          <strong style="color:#00ff88;">Phase 2 — Flicking</strong><br>
+          สะบัดเมาส์ยิงเป้านิ่งสุ่ม 20 เป้า
+        </p>
+        <p class="small">กด <strong>ESC</strong> ระหว่างเล่นเพื่อเปิดเมนูปรับค่าได้ตลอดเวลา</p>
+        <div style="flex: 1;"></div>
+        <div class="row-buttons" style="justify-content: flex-start; margin-top: 8px;">
+          <button id="discord-btn" class="discord" title="เข้าร่วม Discord">
+            <svg viewBox="0 0 71 55" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.4154c-.0923-.017-.1846.025-.2323.1095-.624 1.11-1.3154 2.5581-1.7995 3.6963-5.4572-.817-10.8864-.817-16.2317 0C26.905 3.0581 26.1886 1.6353 25.5617.5253c-.0476-.0817-.14-.124-.2323-.1099-5.071.8734-9.9237 2.4032-14.4518 4.482-.0392.0169-.0728.0451-.0951.0817C1.578 18.7309-.943 32.1443.293 45.3914c.006.065.042.127.092.166 6.073 4.46 11.956 7.168 17.729 8.962.092.029.19-.005.249-.081 1.366-1.865 2.583-3.832 3.627-5.9.062-.121.003-.265-.123-.313-1.931-.732-3.77-1.626-5.539-2.64-.14-.082-.151-.282-.022-.378.372-.279.745-.569 1.1-.862.064-.054.154-.065.23-.031 11.62 5.305 24.2 5.305 35.682 0 .076-.037.165-.025.232.028.355.293.728.586 1.103.865.129.096.118.296-.022.378-1.769 1.034-3.607 1.907-5.541 2.637-.126.048-.182.195-.12.316 1.066 2.065 2.283 4.031 3.624 5.896.057.079.157.113.249.085 5.801-1.795 11.683-4.502 17.756-8.962.052-.039.088-.099.094-.163 1.48-15.315-2.48-28.619-10.498-40.412-.02-.039-.053-.067-.092-.084ZM23.726 37.325c-3.498 0-6.381-3.212-6.381-7.156s2.827-7.156 6.381-7.156c3.582 0 6.437 3.24 6.381 7.156 0 3.944-2.827 7.156-6.381 7.156Zm23.592 0c-3.498 0-6.381-3.212-6.381-7.156s2.827-7.156 6.381-7.156c3.582 0 6.437 3.24 6.381 7.156 0 3.944-2.799 7.156-6.381 7.156Z"/>
+            </svg>
+            เข้าร่วม Discord
+          </button>
+          <button id="tutorial-btn" class="secondary">วิธีใช้ (วิดีโอ)</button>
+          <button id="start-btn">เริ่มเลย</button>
+        </div>
+      </div>
+
+      <div class="col col-settings">
+        <h3>ปรับแต่งก่อนเริ่ม</h3>
+
+        <p style="margin: 4px 0;">Sensitivity</p>
+        <div class="sens-pair">
+          <label>
+            <span class="game-label val">Valorant</span>
+            <input type="number" step="0.001" min="0.001" class="sens-input js-sens-input">
+          </label>
+          <label>
+            <span class="game-label cs2">CS2 16:9</span>
+            <input type="number" step="0.001" min="0.001" class="sens-input cs2 js-cs2-input">
+          </label>
+        </div>
+
+        <div style="margin-top: 12px;">
+          <p style="margin-bottom: 2px;">FOV Preset (เลือกตามเกมที่เล่น)</p>
+          <div class="fov-preset-row">
+            <button class="js-fov-preset" data-preset="valorant">Valorant<span class="preset-sub">vFov 71° / hFov 103°</span></button>
+            <button class="js-fov-preset" data-preset="cs2-16-9">CS2 16:9<span class="preset-sub">vFov 74° / hFov 106°</span></button>
+            <button class="js-fov-preset" data-preset="cs2-4-3">CS2 4:3 Stretch<span class="preset-sub">vFov 74° / hFov 90°</span></button>
+          </div>
+          <p class="small" style="margin: 4px 0 0 0; line-height: 1.5;">โหมด <strong>CS2 4:3 Stretch</strong> จะบีบภาพเป็น 4:3 แล้วยืดออกเต็มจอ — เป้าจะดูใหญ่ขึ้น และ flick แนวนอนรู้สึกเร็วกว่า</p>
+        </div>
+
+        <div class="ch-settings">
+          <h3>Crosshair</h3>
+          <div class="ch-preview-box">
+            <div class="crosshair-render">
+              <div class="line t"></div><div class="line b"></div>
+              <div class="line l"></div><div class="line r"></div>
+              <div class="dot"></div>
+            </div>
+          </div>
+          <label><span class="lbl">ความห่าง (gap)</span><input type="range" class="js-ch-gap" min="0" max="20" step="1" value="2"><span class="num js-ch-gap-val">2</span></label>
+          <label><span class="lbl">ความหนา</span><input type="range" class="js-ch-thickness" min="1" max="6" step="1" value="2"><span class="num js-ch-thickness-val">2</span></label>
+          <label><span class="lbl">ความยาว</span><input type="range" class="js-ch-length" min="0" max="30" step="1" value="2"><span class="num js-ch-length-val">2</span></label>
+          <label><span class="lbl">สี</span><input type="color" class="js-ch-color" value="#00ff88" style="flex:1; height:28px;"><span class="num"></span></label>
+          <label class="checkbox-row"><input type="checkbox" class="js-ch-dot" checked> <span>เปิดจุดตรงกลาง (Dot)</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- เมนู ESC -->
+<div id="pause-menu" class="overlay hidden">
+  <div class="panel" style="max-width: 580px;">
+    <h1>เมนู / ปรับ Sensitivity</h1>
+    <p>ค่า Sensitivity ปัจจุบัน</p>
+    <div class="sens-pair">
+      <label>
+        <span class="game-label val">Valorant</span>
+        <input type="number" step="0.001" min="0.001" class="sens-input js-sens-input">
+      </label>
+      <label>
+        <span class="game-label cs2">CS2 16:9</span>
+        <input type="number" step="0.001" min="0.001" class="sens-input cs2 js-cs2-input">
+      </label>
+    </div>
+    <p class="small">พิมพ์ค่าใหม่ในช่องใดก็ได้ ระบบจะคำนวณอีกฝั่งให้อัตโนมัติ (Valorant ค่ามาตรฐาน = 1.000)</p>
+
+    <div style="margin-top: 22px; text-align: left;">
+      <p style="margin-bottom: 4px; text-align: center;">FOV Preset (เลือกตามเกมที่เล่น)</p>
+      <div class="fov-preset-row">
+        <button class="js-fov-preset" data-preset="valorant">Valorant<span class="preset-sub">vFov 71° / hFov 103°</span></button>
+        <button class="js-fov-preset" data-preset="cs2-16-9">CS2 16:9<span class="preset-sub">vFov 74° / hFov 106°</span></button>
+        <button class="js-fov-preset" data-preset="cs2-4-3">CS2 4:3 Stretch<span class="preset-sub">vFov 74° / hFov 90°</span></button>
+      </div>
+      <p class="small" style="text-align: center; margin: 6px 0 0 0;">โหมด <strong>CS2 4:3 Stretch</strong> จะบีบภาพเป็น 4:3 แล้วยืดออกเต็มจอ</p>
+    </div>
+
+    <div class="ch-settings">
+      <h3>Crosshair</h3>
+      <div class="ch-preview-box">
+        <div class="crosshair-render">
+          <div class="line t"></div><div class="line b"></div>
+          <div class="line l"></div><div class="line r"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+      <label><span class="lbl">ความห่าง (gap)</span><input type="range" class="js-ch-gap" min="0" max="20" step="1" value="2"><span class="num js-ch-gap-val">2</span></label>
+      <label><span class="lbl">ความหนา</span><input type="range" class="js-ch-thickness" min="1" max="6" step="1" value="2"><span class="num js-ch-thickness-val">2</span></label>
+      <label><span class="lbl">ความยาว</span><input type="range" class="js-ch-length" min="0" max="30" step="1" value="2"><span class="num js-ch-length-val">2</span></label>
+      <label><span class="lbl">สี</span><input type="color" class="js-ch-color" value="#00ff88" style="flex:1; height:28px;"><span class="num"></span></label>
+      <label class="checkbox-row"><input type="checkbox" class="js-ch-dot" checked> <span>เปิดจุดตรงกลาง (Dot)</span></label>
+    </div>
+
+    <div class="row-buttons">
+      <button id="resume-btn">กลับเข้าเกม</button>
+      <button id="restart-btn" class="secondary">เริ่มทดสอบใหม่</button>
+    </div>
+  </div>
+</div>
+
+<!-- ป๊อปอัพอธิบาย Tracking ก่อนเริ่ม -->
+<div id="tracking-intro" class="overlay hidden">
+  <div class="panel">
+    <h1>Phase 1 — Tracking</h1>
+    <p>ในช่วงนี้จะมีการ <strong>นับถอยหลัง 5 4 3 2 1</strong> ก่อน<br>ระหว่างนับถอยหลัง <strong>กล้องจะเคลื่อนตามเป้าให้อัตโนมัติ</strong></p>
+    <video id="tracking-video" class="intro-video" src="tracking.mp4" muted loop playsinline preload="auto"></video>
+    <audio id="tracking-audio" src="tracking.mp3" preload="auto"></audio>
+    <p style="text-align:left; line-height:1.85;">
+      ให้นึกสภาพว่ากำลัง <strong>ควบคุมเป้าหมาย</strong> อยู่ในช่วงเวลานับถอยหลัง
+      พยายามออกแรงตามตัวเองคิดว่า <strong>ต้องออกแรงเท่านี้</strong>เพื่อล็อกตาม
+    </p>
+    <p style="text-align:left; line-height:1.85;">
+      หลังจากนับถอยหลังเสร็จ พยายามเลื่อนตามแรงที่คิด<br>
+      • ถ้า <strong style="color:#ffdd44;">ตามไม่ทัน</strong> แสดงว่า <strong>ช้าไป</strong><br>
+      • ถ้า <strong style="color:#ffdd44;">เลยเป้าหมาย</strong> แสดงว่า <strong>เร็วไป</strong>
+    </p>
+    <button id="tracking-intro-start">เริ่ม Tracking</button>
+  </div>
+</div>
+
+<!-- ป๊อปอัพ Tracking หลังจบเฟส -->
+<div id="tracking-question" class="overlay hidden">
+  <div class="panel">
+    <h1>Tracking — ปรับ Sensitivity</h1>
+    <div style="background: rgba(0,0,0,0.35); border: 1px solid #ffdd44; border-radius: 8px; padding: 14px 18px; margin: 6px 0 18px;">
+      <div style="font-size: 12px; letter-spacing: 1.5px; opacity: 0.75; text-transform: uppercase;">Tracking Score</div>
+      <div id="tq-score" style="font-size: 44px; font-weight: 800; color: #ffdd44; letter-spacing: 1px;">0.0%</div>
+      <div id="tq-score-comment" class="small" style="opacity: 0.85; margin-top: 4px;">ติดเป้าได้กี่ % ของเวลา</div>
+    </div>
+    <p>Sensitivity ปัจจุบัน</p>
+    <div class="sens-pair">
+      <label>
+        <span class="game-label val">Valorant</span>
+        <input type="number" step="0.001" min="0.001" id="tq-input" class="sens-input js-sens-input">
+      </label>
+      <label>
+        <span class="game-label cs2">CS2 16:9</span>
+        <input type="number" step="0.001" min="0.001" id="tq-cs2-input" class="sens-input cs2 js-cs2-input">
+      </label>
+    </div>
+    <p style="line-height:1.7; margin-top:14px;">ปรับเพิ่มลดตามความเหมาะสม<br>ถามตัวเองดูว่าความเร็วเมาส์ปัจจุบัน <strong>สามารถ Track ตามเป้าหมายได้อย่างเป็นธรรมชาติ</strong>รึยัง</p>
+    <p class="small">ปุ่มลัด: ÷2 หรือ ×2 จะปรับค่าและเริ่มทดสอบ Tracking ใหม่</p>
+    <div class="row-buttons">
+      <button id="tq-fast" class="danger">÷ 2</button>
+      <button id="tq-slow" class="danger">× 2</button>
+      <button id="tq-retry" class="secondary">ทดสอบ Tracking อีกครั้ง</button>
+      <button id="tq-good">พอดีแล้ว ไปต่อ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ป๊อปอัพอธิบาย Flicking ก่อนเริ่ม -->
+<div id="flicking-intro" class="overlay hidden">
+  <div class="panel">
+    <h1>Phase 2 — Flicking</h1>
+    <p><strong>สะบัดเมาส์</strong>จากเป้ารีเซ็ต (เหลือง) ไปเป้าหลัก (แดง) แบบ <strong>1 จังหวะ</strong></p>
+    <video id="flicking-video" class="intro-video" src="flicking.mp4" muted loop playsinline preload="auto"></video>
+    <audio id="flicking-audio" src="flicking.mp3" preload="auto"></audio>
+    <p class="small" style="text-align:left; line-height:1.9;">
+      • <strong>ไม่ต้องกระชากเมาส์เร็วๆ</strong> ไม่ต้องกระตุก<br>
+      • เลื่อนเมาส์จากจุดรีเซ็ตไปเป้าหลักในจังหวะเดียวอย่างนุ่มนวล<br>
+      • <strong>สังเกตว่า crosshair ถึงตำแหน่งเป้าตามที่ใจนึก</strong>หรือไม่<br>
+      • ไม่ต้องพยายามยิงให้โดน เน้นจังหวะและความรู้สึก
+    </p>
+    <button id="flicking-intro-start">เริ่ม Flicking</button>
+  </div>
+</div>
+
+<!-- ป๊อปอัพ Flicking -->
+<div id="flicking-question" class="overlay hidden">
+  <div class="panel">
+    <h1>Flicking — รู้สึกอย่างไร?</h1>
+    <p>เข้าเป้า: <strong id="fq-hits" style="color:#00ff88;">0</strong> / 20</p>
+    <p>การสะบัดเมาส์ของคุณ <strong>เข้าเป้าตามที่ใจนึก</strong> หรือไม่?</p>
+    <div class="row-buttons">
+      <button id="fq-yes">ใช่ พอดี</button>
+      <button id="fq-no" class="danger">ไม่ ยังไม่ตรงใจ</button>
+    </div>
+  </div>
+</div>
+
+<!-- คำแนะนำ DPI -->
+<div id="dpi-advice" class="overlay hidden">
+  <div class="panel">
+    <h2>คำแนะนำ — ลองเปลี่ยน DPI ของเมาส์</h2>
+    <p style="text-align:left; line-height:1.85;">
+      <strong>DPI</strong> ของเมาส์ทำงานไม่สอดคล้องกับการรับรู้ของคุณ คุณจึงควรเปลี่ยน
+    </p>
+    <p style="text-align:left; line-height:1.85;">
+      ลองปรับ DPI ใน <strong>Driver ของเมาส์</strong> ทีละ <strong>50</strong><br>
+      หรือ ลองค่ามาตรฐานทีละขั้น <strong>400 → 800 → 1600 → 3200</strong><br>
+      หาค่าที่คุณ <strong>Tracking ได้</strong> และ <strong>Flicking เข้าเป้า</strong>
+    </p>
+    <p>หลังเปลี่ยน DPI แล้ว ค่า Sensitivity เดิมจะไม่ตรงอีก ต้อง<strong>เริ่มจูนใหม่ตั้งแต่ต้น</strong> เพื่อหาค่าที่เหมาะสมกับ DPI ใหม่</p>
+    <button id="advice-retry">กลับสู่เมนูหลัก</button>
+  </div>
+</div>
+
+<!-- ผลลัพธ์ -->
+<div id="result-screen" class="overlay hidden">
+  <div class="panel">
+    <h1>เสร็จเรียบร้อย!</h1>
+    <p>Sensitivity (Valorant) ที่เหมาะสมกับคุณคือ</p>
+    <p class="big" id="final-sens">1.000</p>
+    <p class="cs2-line" style="font-size:18px;">CS2 16:9: <strong id="final-cs2-val">4.741</strong></p>
+    <p class="small">ค่าด้านบนคือ Sensitivity สำหรับ Valorant<br>ค่า CS2 ได้จากการคูณ × 4.7407408 (สำหรับสัดส่วน 16:9)</p>
+    <div class="row-buttons">
+      <button id="result-restart">ทดสอบใหม่</button>
+      <button id="result-close" class="secondary">ปิดและเล่นต่อ</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+  // ================= STATE =================
+  let sensitivity = 1.000;
+  // FOV presets — each game uses its own vertical FOV (Three.js's camera.fov)
+  // and the matching aspect ratio. Numbers verified against actual game configs:
+  //   Valorant 16:9: vFov 71, hFov 103
+  //   CS2 16:9:      vFov 74, hFov 106
+  //   CS2 4:3 stretched: vFov 74, hFov 90 (rendered at 4:3 then stretched to fill)
+  const FOV_PRESETS = {
+    'valorant':  { label: 'Valorant',        vFov: 71, stretch: false },
+    'cs2-16-9':  { label: 'CS2 16:9',        vFov: 74, stretch: false },
+    'cs2-4-3':   { label: 'CS2 4:3 Stretch', vFov: 74, stretch: true  },
+  };
+  let currentFovPreset = 'valorant';
+  let stretchMode = false; // derived from preset
+  const STRETCH_ASPECT = 4 / 3;
+  const BASE_MOUSE_SPEED = 0.0022; // rad per pixel at sens=1
+  const PI_2 = Math.PI / 2;
+  const CS2_MULT = 4.7407408;
+  let yaw = 0, pitch = 0;
+  let justLockedSkipFrames = 0; // skip first few mousemove events after pointer lock to avoid Chrome's spurious huge deltas
+
+  function cs2From(val) {
+    return (Math.round(val * CS2_MULT * 1000) / 1000).toFixed(3);
+  }
+
+  let phase = 'menu'; // menu | tracking | tracking-q | flicking | flicking-q | advice | result | paused
+  let pausedFromPhase = null;
+
+  const TRACKING_DURATION = 20;
+  let trackingTimer = 0;
+  // Tracking sub-mode: 'countdown' (camera auto-follows, mouse disabled) | 'free' (player aim)
+  let trackingMode = 'free';
+  const COUNTDOWN_FROM = 5;        // counts 5..4..3..2..1
+  const COUNTDOWN_GO_HOLD = 0.6;   // seconds to show "เริ่ม!" after 1
+  let countdownTime = 0;           // ticks downward from COUNTDOWN_FROM + COUNTDOWN_GO_HOLD
+
+  // Tracking score: accumulate on-target vs total time during 'free' tracking.
+  let trackingOnTargetTime = 0;
+  let trackingTotalTime = 0;
+  let lastTrackingScore = 0; // last completed tracking phase score (0..100)
+
+  const FLICK_TARGET_COUNT = 20;
+  let flickAttempts = 0;
+  let flickHits = 0;
+  let flickShowingCenter = false;
+
+  // ================= THREE.JS =================
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0a0a14);
+  scene.fog = new THREE.Fog(0x0a0a14, 25, 80);
+
+  const camera = new THREE.PerspectiveCamera(71, innerWidth / innerHeight, 0.1, 200);
+  camera.position.set(0, 1.65, 0);
+  camera.rotation.order = 'YXZ';
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  document.body.appendChild(renderer.domElement);
+
+  // Lighting
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+  const keyLight = new THREE.DirectionalLight(0xffffff, 0.9);
+  keyLight.position.set(8, 18, 6);
+  scene.add(keyLight);
+  const fillLight = new THREE.PointLight(0x4488ff, 0.4, 40);
+  fillLight.position.set(-8, 6, 4);
+  scene.add(fillLight);
+
+  // Floor
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(80, 80),
+    new THREE.MeshStandardMaterial({ color: 0x202030, roughness: 0.95 })
+  );
+  floor.rotation.x = -Math.PI / 2;
+  scene.add(floor);
+
+  // Grid
+  const grid = new THREE.GridHelper(80, 40, 0x335577, 0x22223a);
+  grid.position.y = 0.01;
+  scene.add(grid);
+
+  // Back wall
+  const backWall = new THREE.Mesh(
+    new THREE.PlaneGeometry(50, 25),
+    new THREE.MeshStandardMaterial({ color: 0x2a2a40, roughness: 0.9 })
+  );
+  backWall.position.set(0, 6, -16);
+  scene.add(backWall);
+
+  // Side walls
+  const sideMat = new THREE.MeshStandardMaterial({ color: 0x252538, roughness: 0.9 });
+  const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(40, 25), sideMat);
+  leftWall.position.set(-20, 6, -2);
+  leftWall.rotation.y = Math.PI / 2;
+  scene.add(leftWall);
+  const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(40, 25), sideMat);
+  rightWall.position.set(20, 6, -2);
+  rightWall.rotation.y = -Math.PI / 2;
+  scene.add(rightWall);
+
+  // Ceiling
+  const ceiling = new THREE.Mesh(
+    new THREE.PlaneGeometry(80, 80),
+    new THREE.MeshStandardMaterial({ color: 0x15152a, roughness: 1 })
+  );
+  ceiling.rotation.x = Math.PI / 2;
+  ceiling.position.y = 12;
+  scene.add(ceiling);
+
+  // Some decorative pillars for depth reference
+  const pillarMat = new THREE.MeshStandardMaterial({ color: 0x33334a, roughness: 0.8 });
+  [[-12, -12], [12, -12], [-12, 4], [12, 4]].forEach(([x, z]) => {
+    const p = new THREE.Mesh(new THREE.BoxGeometry(1, 12, 1), pillarMat);
+    p.position.set(x, 6, z);
+    scene.add(p);
+  });
+
+  // Targets
+  let trackingTarget = null;
+  let flickTarget = null;
+  let centerTarget = null;
+
+  function makeTarget(radius, color) {
+    const group = new THREE.Group();
+    const inner = new THREE.Mesh(
+      new THREE.SphereGeometry(radius, 24, 24),
+      new THREE.MeshStandardMaterial({
+        color, emissive: new THREE.Color(color).multiplyScalar(0.4),
+        roughness: 0.4, metalness: 0.2
+      })
+    );
+    group.add(inner);
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(radius * 1.15, radius * 0.08, 12, 32),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x444444 })
+    );
+    group.add(ring);
+    return group;
+  }
+
+  // ================= INPUT =================
+  const canvas = renderer.domElement;
+  let pointerLocked = false;
+  let lockRequestPending = false;
+
+  document.addEventListener('mousemove', (e) => {
+    if (!pointerLocked) return;
+    if (phase !== 'tracking' && phase !== 'flicking') return;
+    // During countdown, camera is driven automatically — ignore mouse input entirely.
+    if (phase === 'tracking' && trackingMode === 'countdown') return;
+
+    // Discard the first frames after lock — browsers can deliver huge phantom deltas there.
+    if (justLockedSkipFrames > 0) { justLockedSkipFrames--; return; }
+
+    // Clamp absurdly large per-event deltas (Chrome bug: can spike to thousands).
+    const MAX_DELTA = 200;
+    let mx = e.movementX, my = e.movementY;
+    if (Math.abs(mx) > MAX_DELTA || Math.abs(my) > MAX_DELTA) return;
+
+    yaw   -= mx * BASE_MOUSE_SPEED * sensitivity;
+    pitch -= my * BASE_MOUSE_SPEED * sensitivity;
+    pitch = Math.max(-PI_2 + 0.05, Math.min(PI_2 - 0.05, pitch));
+    camera.rotation.y = yaw;
+    camera.rotation.x = pitch;
+  });
+
+  document.addEventListener('pointerlockchange', () => {
+    const wasLocked = pointerLocked;
+    pointerLocked = document.pointerLockElement === canvas;
+    if (pointerLocked && !wasLocked) {
+      // freshly acquired lock: skip a few mousemove frames to dodge phantom deltas
+      justLockedSkipFrames = 3;
+    }
+    if (!pointerLocked && (phase === 'tracking' || phase === 'flicking')) {
+      pausedFromPhase = phase;
+      phase = 'paused';
+      showOverlay(els.pauseMenu);
+      els.sensInputs.forEach(inp => inp.value = sensitivity.toFixed(3));
+    }
+  });
+
+  // Whether the browser supports unadjustedMovement (raw mouse input that
+  // bypasses OS-level pointer acceleration & Windows sensitivity scaling).
+  let rawInputSupported = null; // null = unknown yet, true/false after first try
+
+  function lockPointer() {
+    if (pointerLocked || lockRequestPending) return;
+    lockRequestPending = true;
+
+    const finish = () => setTimeout(() => { lockRequestPending = false; }, 200);
+
+    // Prefer raw, unaccelerated mouse input. Chromium-based browsers return a
+    // Promise from requestPointerLock when called with options. If the option
+    // is unsupported (Firefox/Safari, or older Chrome) we fall back silently.
+    try {
+      const opts = { unadjustedMovement: true };
+      const p = canvas.requestPointerLock(opts);
+      if (p && typeof p.then === 'function') {
+        p.then(() => {
+          rawInputSupported = true;
+          updateRawInputDisplay();
+          finish();
+        }).catch((err) => {
+          // unadjustedMovement not supported → retry without options
+          rawInputSupported = false;
+          updateRawInputDisplay();
+          try { canvas.requestPointerLock(); } catch (e) {}
+          finish();
+        });
+      } else {
+        // Older API returned undefined — assume the option was ignored.
+        finish();
+      }
+    } catch (e) {
+      // Browser threw on the options arg → plain lock.
+      try { canvas.requestPointerLock(); } catch (e2) {}
+      rawInputSupported = false;
+      updateRawInputDisplay();
+      finish();
+    }
+  }
+  function unlockPointer() {
+    if (pointerLocked) {
+      try { document.exitPointerLock(); } catch (e) {}
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (phase === 'tracking' || phase === 'flicking') {
+        // pointerlockchange handler will trigger pause
+      }
+    }
+  });
+
+  // ================= UI =================
+  const els = {
+    hud: document.getElementById('hud'),
+    crosshair: document.getElementById('crosshair'),
+    hint: document.getElementById('hint'),
+    startMenu: document.getElementById('start-menu'),
+    pauseMenu: document.getElementById('pause-menu'),
+    trackingIntro: document.getElementById('tracking-intro'),
+    trackingQ: document.getElementById('tracking-question'),
+    flickingIntro: document.getElementById('flicking-intro'),
+    flickingQ: document.getElementById('flicking-question'),
+    dpiAdvice: document.getElementById('dpi-advice'),
+    resultScreen: document.getElementById('result-screen'),
+    sensDisplay: document.getElementById('sens-display'),
+    cs2Display: document.getElementById('cs2-display'),
+    sensInputs: document.querySelectorAll('.js-sens-input'),
+    cs2Inputs: document.querySelectorAll('.js-cs2-input'),
+    phaseInfo: document.getElementById('phase-info'),
+    progressInfo: document.getElementById('progress-info'),
+    fqHits: document.getElementById('fq-hits'),
+    finalSens: document.getElementById('final-sens'),
+    finalCs2Val: document.getElementById('final-cs2-val'),
+    chGap: document.querySelectorAll('.js-ch-gap'),
+    chGapVal: document.querySelectorAll('.js-ch-gap-val'),
+    chThickness: document.querySelectorAll('.js-ch-thickness'),
+    chThicknessVal: document.querySelectorAll('.js-ch-thickness-val'),
+    chLength: document.querySelectorAll('.js-ch-length'),
+    chLengthVal: document.querySelectorAll('.js-ch-length-val'),
+    chColor: document.querySelectorAll('.js-ch-color'),
+    chDot: document.querySelectorAll('.js-ch-dot'),
+    countdownDisplay: document.getElementById('countdown-display'),
+    countdownSub: document.getElementById('countdown-sub'),
+    rawInputInfo: document.getElementById('rawinput-info'),
+    trackingVideo: document.getElementById('tracking-video'),
+    trackingAudio: document.getElementById('tracking-audio'),
+    flickingVideo: document.getElementById('flicking-video'),
+    flickingAudio: document.getElementById('flicking-audio'),
+    trackScoreRow: document.getElementById('track-score-row'),
+    trackScoreInfo: document.getElementById('track-score-info'),
+    tqScore: document.getElementById('tq-score'),
+    tqScoreComment: document.getElementById('tq-score-comment'),
+  };
+
+  // ---- intro tutorial media (video loops; audio plays once) ----
+  function stopIntroMedia() {
+    [els.trackingVideo, els.trackingAudio, els.flickingVideo, els.flickingAudio].forEach(m => {
+      if (!m) return;
+      try { m.pause(); m.currentTime = 0; } catch (e) {}
+    });
+  }
+  function playIntroMedia(video, audio) {
+    stopIntroMedia();
+    if (video) {
+      try {
+        video.currentTime = 0;
+        const p = video.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      } catch (e) {}
+    }
+    if (audio) {
+      try {
+        audio.currentTime = 0;
+        const p = audio.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      } catch (e) {}
+    }
+  }
+
+  function updateRawInputDisplay() {
+    if (!els.rawInputInfo) return;
+    if (rawInputSupported === true) {
+      els.rawInputInfo.textContent = 'เปิดอยู่ (อ่านจาก sensor ตรง)';
+      els.rawInputInfo.style.color = '#00ff88';
+    } else if (rawInputSupported === false) {
+      els.rawInputInfo.textContent = 'ไม่รองรับ (ใช้ค่าจาก Windows)';
+      els.rawInputInfo.style.color = '#ff8866';
+    } else {
+      els.rawInputInfo.textContent = 'กำลังตรวจสอบ...';
+      els.rawInputInfo.style.color = '#aaaaaa';
+    }
+  }
+
+  const allOverlays = [els.startMenu, els.pauseMenu, els.trackingIntro, els.trackingQ, els.flickingIntro, els.flickingQ, els.dpiAdvice, els.resultScreen];
+  function hideAllOverlays() { allOverlays.forEach(o => o.classList.add('hidden')); }
+  function showOverlay(el) { hideAllOverlays(); el.classList.remove('hidden'); }
+
+  function updateSensDisplay() {
+    const s = sensitivity.toFixed(3);
+    const c = cs2From(sensitivity);
+    els.sensDisplay.textContent = s;
+    els.cs2Display.textContent = c;
+    els.finalSens.textContent = s;
+    if (els.finalCs2Val) els.finalCs2Val.textContent = c;
+    els.sensInputs.forEach(inp => {
+      if (document.activeElement !== inp) inp.value = s;
+    });
+    els.cs2Inputs.forEach(inp => {
+      if (document.activeElement !== inp) inp.value = c;
+    });
+  }
+
+  function roundSens(v) {
+    return Math.round(v * 1000) / 1000;
+  }
+
+  function updateProgress() {
+    if (phase === 'tracking') {
+      if (trackingMode === 'countdown') {
+        els.phaseInfo.textContent = 'Tracking (ดูจังหวะ)';
+        els.progressInfo.textContent = 'กำลังนับถอยหลัง...';
+      } else {
+        els.phaseInfo.textContent = 'Tracking';
+        els.progressInfo.textContent = `${Math.ceil(trackingTimer)} วินาที`;
+      }
+    } else if (phase === 'flicking') {
+      els.phaseInfo.textContent = 'Flicking';
+      const stage = flickShowingCenter ? ' (รีเป้ากลาง)' : '';
+      els.progressInfo.textContent = `${flickAttempts} / ${FLICK_TARGET_COUNT}${stage}`;
+    }
+  }
+
+  function showHud() {
+    els.hud.classList.remove('hidden');
+    els.crosshair.classList.remove('hidden');
+    els.hint.classList.remove('hidden');
+  }
+  function hideHud() {
+    els.hud.classList.add('hidden');
+    els.crosshair.classList.add('hidden');
+    els.hint.classList.add('hidden');
+    hideCountdown();
+  }
+
+  // ---- countdown helpers ----
+  let _lastCountdownLabel = '';
+  function showCountdown(label, isGo) {
+    if (label !== _lastCountdownLabel) {
+      // restart pulse animation each tick
+      els.countdownDisplay.style.animation = 'none';
+      // force reflow
+      void els.countdownDisplay.offsetWidth;
+      els.countdownDisplay.style.animation = '';
+      _lastCountdownLabel = label;
+    }
+    els.countdownDisplay.textContent = label;
+    els.countdownDisplay.classList.toggle('go', !!isGo);
+    els.countdownDisplay.classList.remove('hidden');
+    els.countdownSub.classList.remove('hidden');
+  }
+  function hideCountdown() {
+    els.countdownDisplay.classList.add('hidden');
+    els.countdownSub.classList.add('hidden');
+    _lastCountdownLabel = '';
+  }
+
+  // Aim the camera directly at a world-space point (used during countdown auto-track).
+  function aimAt(targetPos) {
+    const dx = targetPos.x - camera.position.x;
+    const dy = targetPos.y - camera.position.y;
+    const dz = targetPos.z - camera.position.z;
+    const distXZ = Math.sqrt(dx * dx + dz * dz);
+    yaw = Math.atan2(-dx, -dz);
+    pitch = Math.atan2(dy, distXZ);
+    pitch = Math.max(-PI_2 + 0.05, Math.min(PI_2 - 0.05, pitch));
+    camera.rotation.y = yaw;
+    camera.rotation.x = pitch;
+  }
+
+  // ================= PHASE LOGIC =================
+  function cleanupTargets() {
+    if (trackingTarget) { scene.remove(trackingTarget); trackingTarget = null; }
+    if (flickTarget) { scene.remove(flickTarget); flickTarget = null; }
+    if (centerTarget) { scene.remove(centerTarget); centerTarget = null; }
+    flickShowingCenter = false;
+  }
+
+  function spawnTrackingTarget() {
+    trackingTarget = makeTarget(0.25, 0xff3b5c);
+    trackingTarget.userData = {
+      t: Math.random() * Math.PI * 2,
+      speedX: 1.1,
+      speedY: 1.7,
+      rangeX: 7,
+      rangeY: 1.6,
+      cx: 0,
+      cy: 3.2,
+    };
+    scene.add(trackingTarget);
+  }
+
+  const EYE_LEVEL = 1.65; // camera Y — keep flick targets on this horizontal plane
+
+  function spawnFlickTarget() {
+    flickTarget = makeTarget(0.35, 0xff3b5c);
+    let x;
+    do {
+      x = (Math.random() - 0.5) * 18;
+    } while (Math.abs(x) < 3); // away from center reset point
+    flickTarget.position.set(x, EYE_LEVEL, -15.5);
+    scene.add(flickTarget);
+    flickShowingCenter = false;
+  }
+
+  function spawnCenterTarget() {
+    centerTarget = makeTarget(0.45, 0xffdd44);
+    centerTarget.position.set(0, EYE_LEVEL, -8);
+    scene.add(centerTarget);
+    flickShowingCenter = true;
+  }
+
+  function startTracking() {
+    cleanupTargets();
+    phase = 'tracking';
+    trackingMode = 'countdown';
+    countdownTime = COUNTDOWN_FROM + COUNTDOWN_GO_HOLD;
+    trackingTimer = TRACKING_DURATION;
+    trackingOnTargetTime = 0;
+    trackingTotalTime = 0;
+    lastTrackingScore = 0;
+    spawnTrackingTarget();
+    hideAllOverlays();
+    showHud();
+    // Aim camera at target immediately so the very first frame is locked on.
+    if (trackingTarget) aimAt(trackingTarget.position);
+    showCountdown(String(COUNTDOWN_FROM), false);
+    updateScoreDisplay(0);
+    els.trackScoreRow.classList.add('hidden'); // hidden during countdown
+    updateProgress();
+    lockPointer();
+  }
+
+  function updateScoreDisplay(score) {
+    const txt = score.toFixed(1) + '%';
+    if (els.trackScoreInfo) els.trackScoreInfo.textContent = txt;
+  }
+
+  function commentForScore(s) {
+    if (s >= 90) return 'ยอดเยี่ยม — ติดเป้าเกือบตลอดเวลา';
+    if (s >= 75) return 'ดีมาก — Sensitivity เข้าใกล้พอดีแล้ว';
+    if (s >= 55) return 'พอใช้ — ลองปรับ Sensitivity เล็กน้อย';
+    if (s >= 35) return 'ยังไม่ค่อยติด — ลองปรับ Sensitivity ปานกลาง';
+    return 'หลุดเป้าบ่อยมาก — ลองปรับ Sensitivity ใหม่';
+  }
+
+  function endTracking() {
+    // Compute final score before clearing target.
+    lastTrackingScore = trackingTotalTime > 0
+      ? (trackingOnTargetTime / trackingTotalTime) * 100
+      : 0;
+    cleanupTargets();
+    phase = 'tracking-q';
+    trackingMode = 'free';
+    hideCountdown();
+    updateSensDisplay();
+    if (els.tqScore) els.tqScore.textContent = lastTrackingScore.toFixed(1) + '%';
+    if (els.tqScoreComment) els.tqScoreComment.textContent = commentForScore(lastTrackingScore);
+    showOverlay(els.trackingQ);
+    unlockPointer();
+  }
+
+  function startFlicking() {
+    cleanupTargets();
+    phase = 'flicking';
+    flickAttempts = 0;
+    flickHits = 0;
+    spawnCenterTarget();
+    hideAllOverlays();
+    showHud();
+    els.trackScoreRow.classList.add('hidden'); // not relevant in flicking
+    updateProgress();
+    lockPointer();
+  }
+
+  function endFlicking() {
+    cleanupTargets();
+    phase = 'flicking-q';
+    els.fqHits.textContent = flickHits;
+    showOverlay(els.flickingQ);
+    unlockPointer();
+  }
+
+  function showResult() {
+    cleanupTargets();
+    phase = 'result';
+    updateSensDisplay();
+    showOverlay(els.resultScreen);
+    unlockPointer();
+  }
+
+  function showTrackingIntro() {
+    cleanupTargets();
+    hideHud();
+    showOverlay(els.trackingIntro);
+    unlockPointer();
+    playIntroMedia(els.trackingVideo, els.trackingAudio);
+  }
+
+  function showFlickingIntro() {
+    cleanupTargets();
+    hideHud();
+    showOverlay(els.flickingIntro);
+    unlockPointer();
+    playIntroMedia(els.flickingVideo, els.flickingAudio);
+  }
+
+  // ================= SHOOTING =================
+  const raycaster = new THREE.Raycaster();
+  const screenCenter = new THREE.Vector2(0, 0);
+
+  canvas.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    if (!pointerLocked) {
+      // If no overlays are shown, request lock
+      const anyOverlayVisible = allOverlays.some(o => !o.classList.contains('hidden'));
+      if (!anyOverlayVisible && (phase === 'tracking' || phase === 'flicking')) {
+        lockPointer();
+      }
+      return;
+    }
+    if (phase === 'flicking') {
+      handleFlickShot();
+    }
+  });
+
+  function flashHit(target) {
+    // brief scale + fade animation
+    target.userData._fading = true;
+    const start = performance.now();
+    const dur = 180;
+    function step() {
+      const t = Math.min(1, (performance.now() - start) / dur);
+      const s = 1 + t * 0.6;
+      target.scale.set(s, s, s);
+      target.children.forEach(c => {
+        if (c.material) c.material.opacity = 1 - t;
+        if (c.material) c.material.transparent = true;
+      });
+      if (t < 1) requestAnimationFrame(step);
+      else { scene.remove(target); }
+    }
+    step();
+  }
+
+  function handleFlickShot() {
+    raycaster.setFromCamera(screenCenter, camera);
+
+    if (flickShowingCenter && centerTarget) {
+      const hits = raycaster.intersectObject(centerTarget, true);
+      if (hits.length > 0) {
+        flashHit(centerTarget);
+        centerTarget = null;
+        flickShowingCenter = false;
+        spawnFlickTarget();
+        updateProgress();
+      }
+      // miss center: must hit center to proceed
+      return;
+    }
+
+    if (flickTarget) {
+      flickAttempts++;
+      const hits = raycaster.intersectObject(flickTarget, true);
+      if (hits.length > 0) {
+        flickHits++;
+        flashHit(flickTarget);
+        flickTarget = null;
+      } else {
+        scene.remove(flickTarget);
+        flickTarget = null;
+      }
+
+      if (flickAttempts >= FLICK_TARGET_COUNT) {
+        endFlicking();
+      } else {
+        spawnCenterTarget();
+        updateProgress();
+      }
+    }
+  }
+
+  // ================= BUTTON HANDLERS =================
+  function enterFullscreen() {
+    const el = document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+    if (req && !document.fullscreenElement) {
+      try {
+        const p = req.call(el);
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      } catch (e) {}
+    }
+  }
+
+  document.getElementById('start-btn').addEventListener('click', () => {
+    enterFullscreen();
+    showTrackingIntro();
+  });
+
+  document.getElementById('tutorial-btn').addEventListener('click', () => {
+    window.open('https://youtu.be/iKzMtDK6cVY', '_blank', 'noopener,noreferrer');
+  });
+
+  document.getElementById('discord-btn').addEventListener('click', () => {
+    window.open('https://discord.com/invite/Dnb2gBxZrZ', '_blank', 'noopener,noreferrer');
+  });
+
+  document.getElementById('tracking-intro-start').addEventListener('click', () => {
+    stopIntroMedia();
+    startTracking();
+  });
+
+  document.getElementById('flicking-intro-start').addEventListener('click', () => {
+    stopIntroMedia();
+    startFlicking();
+  });
+
+  document.getElementById('resume-btn').addEventListener('click', () => {
+    if (pausedFromPhase) {
+      phase = pausedFromPhase;
+      pausedFromPhase = null;
+      hideAllOverlays();
+      showHud();
+      lockPointer();
+    } else {
+      hideAllOverlays();
+    }
+  });
+
+  document.getElementById('restart-btn').addEventListener('click', () => {
+    cleanupTargets();
+    phase = 'menu';
+    pausedFromPhase = null;
+    hideHud();
+    showOverlay(els.startMenu);
+  });
+
+  // ------- sensitivity inputs (bidirectional Valorant ↔ CS2) -------
+  function applySensFromValorant(v, sourceInput) {
+    if (isNaN(v) || v <= 0) return;
+    sensitivity = roundSens(v);
+    const s = sensitivity.toFixed(3);
+    const c = cs2From(sensitivity);
+    els.sensDisplay.textContent = s;
+    els.cs2Display.textContent = c;
+    els.sensInputs.forEach(inp => { if (inp !== sourceInput) inp.value = s; });
+    els.cs2Inputs.forEach(inp => { if (inp !== sourceInput) inp.value = c; });
+  }
+  function applySensFromCs2(cv, sourceInput) {
+    if (isNaN(cv) || cv <= 0) return;
+    sensitivity = roundSens(cv / CS2_MULT);
+    const s = sensitivity.toFixed(3);
+    const c = cs2From(sensitivity); // recomputed (may differ slightly after rounding)
+    els.sensDisplay.textContent = s;
+    els.cs2Display.textContent = c;
+    els.sensInputs.forEach(inp => { if (inp !== sourceInput) inp.value = s; });
+    els.cs2Inputs.forEach(inp => { if (inp !== sourceInput) inp.value = c; });
+  }
+
+  els.sensInputs.forEach(input => {
+    input.addEventListener('input', () => applySensFromValorant(parseFloat(input.value), input));
+  });
+  els.cs2Inputs.forEach(input => {
+    input.addEventListener('input', () => applySensFromCs2(parseFloat(input.value), input));
+  });
+
+  // Crosshair settings — sync all instances of each control via shared CSS variables
+  const chState = { gap: 2, thickness: 2, length: 2, color: '#00ff88', dot: true };
+  function applyCrosshair() {
+    const root = document.documentElement.style;
+    root.setProperty('--ch-gap', chState.gap + 'px');
+    root.setProperty('--ch-thickness', chState.thickness + 'px');
+    root.setProperty('--ch-length', chState.length + 'px');
+    root.setProperty('--ch-color', chState.color);
+    root.setProperty('--ch-dot-display', chState.dot ? 'block' : 'none');
+    els.chGap.forEach(i => i.value = chState.gap);
+    els.chThickness.forEach(i => i.value = chState.thickness);
+    els.chLength.forEach(i => i.value = chState.length);
+    els.chColor.forEach(i => i.value = chState.color);
+    els.chDot.forEach(i => i.checked = chState.dot);
+    els.chGapVal.forEach(s => s.textContent = chState.gap);
+    els.chThicknessVal.forEach(s => s.textContent = chState.thickness);
+    els.chLengthVal.forEach(s => s.textContent = chState.length);
+  }
+  function bindRange(list, key, parser) {
+    list.forEach(input => {
+      ['input', 'change'].forEach(ev => {
+        input.addEventListener(ev, () => {
+          chState[key] = parser(input);
+          applyCrosshair();
+        });
+      });
+    });
+  }
+  bindRange(els.chGap, 'gap', i => parseInt(i.value, 10));
+  bindRange(els.chThickness, 'thickness', i => parseInt(i.value, 10));
+  bindRange(els.chLength, 'length', i => parseInt(i.value, 10));
+  bindRange(els.chColor, 'color', i => i.value);
+  bindRange(els.chDot, 'dot', i => i.checked);
+  applyCrosshair();
+
+  document.getElementById('tq-fast').addEventListener('click', () => {
+    sensitivity = roundSens(sensitivity / 2);
+    updateSensDisplay();
+    startTracking();
+  });
+  document.getElementById('tq-slow').addEventListener('click', () => {
+    sensitivity = roundSens(sensitivity * 2);
+    updateSensDisplay();
+    startTracking();
+  });
+  document.getElementById('tq-retry').addEventListener('click', () => {
+    startTracking();
+  });
+  document.getElementById('tq-good').addEventListener('click', () => {
+    showFlickingIntro();
+  });
+
+  document.getElementById('fq-yes').addEventListener('click', () => {
+    showResult();
+  });
+  document.getElementById('fq-no').addEventListener('click', () => {
+    showOverlay(els.dpiAdvice);
+  });
+  document.getElementById('advice-retry').addEventListener('click', () => {
+    sensitivity = 1.000;
+    yaw = 0; pitch = 0;
+    camera.rotation.set(0, 0, 0);
+    updateSensDisplay();
+    cleanupTargets();
+    phase = 'menu';
+    hideAllOverlays();
+    hideHud();
+    showOverlay(els.startMenu);
+  });
+
+  document.getElementById('result-restart').addEventListener('click', () => {
+    sensitivity = 1.000;
+    yaw = 0; pitch = 0;
+    camera.rotation.set(0, 0, 0);
+    updateSensDisplay();
+    cleanupTargets();
+    phase = 'menu';
+    hideHud();
+    showOverlay(els.startMenu);
+  });
+  document.getElementById('result-close').addEventListener('click', () => {
+    hideAllOverlays();
+    hideHud();
+    phase = 'menu';
+    showOverlay(els.startMenu);
+  });
+
+  // ================= ANIMATION LOOP =================
+  const clock = new THREE.Clock();
+  function animate() {
+    const dt = Math.min(0.05, clock.getDelta());
+
+    if (phase === 'tracking' && trackingTarget) {
+      const ud = trackingTarget.userData;
+      ud.t += dt;
+      trackingTarget.position.x = ud.cx + Math.sin(ud.t * ud.speedX) * ud.rangeX;
+      trackingTarget.position.y = ud.cy + Math.sin(ud.t * ud.speedY + 0.7) * ud.rangeY;
+      trackingTarget.position.z = -14.5;
+
+      if (trackingMode === 'countdown') {
+        // Camera auto-follows the target while the player observes feel/force.
+        aimAt(trackingTarget.position);
+        countdownTime -= dt;
+        if (countdownTime > COUNTDOWN_GO_HOLD) {
+          // still counting 5..4..3..2..1
+          const remaining = countdownTime - COUNTDOWN_GO_HOLD;
+          const label = String(Math.max(1, Math.ceil(remaining)));
+          showCountdown(label, false);
+        } else if (countdownTime > 0) {
+          // "เริ่ม!" hold
+          showCountdown('เริ่ม!', true);
+        } else {
+          // countdown complete — hand control back to the player
+          trackingMode = 'free';
+          hideCountdown();
+          updateProgress();
+        }
+      } else {
+        // Free tracking — accumulate on-target / total time for the score.
+        els.trackScoreRow.classList.remove('hidden');
+        raycaster.setFromCamera(screenCenter, camera);
+        const hits = raycaster.intersectObject(trackingTarget, true);
+        trackingTotalTime += dt;
+        if (hits.length > 0) trackingOnTargetTime += dt;
+        const liveScore = (trackingOnTargetTime / trackingTotalTime) * 100;
+        updateScoreDisplay(liveScore);
+
+        trackingTimer -= dt;
+        updateProgress();
+        if (trackingTimer <= 0) endTracking();
+      }
+    }
+
+    // Slowly rotate target rings for visibility
+    [trackingTarget, flickTarget, centerTarget].forEach(t => {
+      if (t && t.children[1]) t.children[1].rotation.z += dt * 1.5;
+    });
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+
+  function applyAspect() {
+    // In stretch mode, camera projects a 4:3 frustum but the renderer fills the
+    // full window — three.js maps the narrower frustum onto the wider viewport,
+    // producing the same "stretched" effect as CS2's 4:3 → 16:9 setting.
+    camera.aspect = stretchMode ? STRETCH_ASPECT : (innerWidth / innerHeight);
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  }
+
+  window.addEventListener('resize', applyAspect);
+
+  // Apply a FOV preset (vertical FOV + matching aspect ratio).
+  function applyFovPreset(key) {
+    const p = FOV_PRESETS[key];
+    if (!p) return;
+    currentFovPreset = key;
+    stretchMode = p.stretch;
+    camera.fov = p.vFov; // Three.js convention: camera.fov is vertical FOV
+    applyAspect();       // sets aspect + updateProjectionMatrix
+    // Highlight the active preset button across all menus.
+    document.querySelectorAll('.js-fov-preset').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.preset === key);
+    });
+  }
+
+  document.querySelectorAll('.js-fov-preset').forEach(btn => {
+    btn.addEventListener('click', () => applyFovPreset(btn.dataset.preset));
+  });
+
+  // Init
+  updateSensDisplay();
+  updateRawInputDisplay();
+  applyFovPreset(currentFovPreset); // applies default (Valorant)
+  animate();
+})();
+</script>
+</body>
+</html>
