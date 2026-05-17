@@ -21,7 +21,8 @@
       "Bash(curl -sS \"https://vlrggapi.vercel.app/v2/match/details?match_id=666494\")",
       "Bash(node -e ' *)",
       "Bash(ls -la \"C:\\\\Users\\\\pizza\\\\.claude\\\\projects\\\\D--\\\\memory\\\\\" 2>/dev/null)",
-      "Bash(python3)"
+      "Bash(python3)",
+      "Bash(python3 -c ' *)"
     ]
   }
 }
